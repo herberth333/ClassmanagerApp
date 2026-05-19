@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
+import 'package:classmanagerapp/core/widgets/diciplinas/diciplinas.dart'; 
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -12,18 +13,14 @@ class _HomeScreenState extends State<HomeScreen> {
   int _abaAtiva = 1; 
 
   final List<Widget> _telas = [
-    const Center(child: Text('Conteúdo do Início', style: TextStyle(fontSize: 20))),
-    const Center(child: Text('Conteúdo do Acadêmico', style: TextStyle(fontSize: 20))),
-    const Center(child: Text('Conteúdo das Configurações', style: TextStyle(fontSize: 20))),
+    const Scaffold(body: Center(child: Text('Conteúdo do Início', style: TextStyle(fontSize: 20)))),
+    const DiciplinasScreen(),
+    const Scaffold(body: Center(child: Text('Conteúdo das Configurações', style: TextStyle(fontSize: 20)))),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('ClassManager - Início'),
-      ),
-      
       body: _telas[_abaAtiva], 
 
       bottomNavigationBar: CustomNavbar(
