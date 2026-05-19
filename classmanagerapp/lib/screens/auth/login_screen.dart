@@ -1,4 +1,3 @@
-// lib/screens/login_screen.dart
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/services/auth/auth_service.dart';
 import 'package:classmanagerapp/screens/home/home_sreen.dart'; 
