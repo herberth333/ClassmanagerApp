@@ -10,11 +10,11 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _abaAtiva = 1; 
+  int _abaAtiva = 0; 
 
   final List<Widget> _telas = [
-    const Scaffold(body: Center(child: Text('Conteúdo do Início', style: TextStyle(fontSize: 20)))),
-    const DiciplinasScreen(),
+    const DiciplinasScreen(), 
+    const Scaffold(body: Center(child: Text('Conteúdo do Acadêmico', style: TextStyle(fontSize: 20)))),
     const Scaffold(body: Center(child: Text('Conteúdo das Configurações', style: TextStyle(fontSize: 20)))),
   ];
 

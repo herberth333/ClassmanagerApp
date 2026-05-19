@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
+import 'detalhesDisciplina.dart';
 
 class DiciplinasScreen extends StatelessWidget {
   const DiciplinasScreen({super.key});
 
-//array de string
   final List<String> disciplinas = const [
     'Calculo 1',
     'Calculo 2',
     'Estatística',
     'Redes',
     'Programação de Redes', 
+    'Direito Penal',
+    'Experiencia Extencionista',
+    'Sociologia',
+    'Libras'
   ];
 
   @override
@@ -20,7 +24,7 @@ class DiciplinasScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white), //icone de saida
+          icon: const Icon(Icons.logout, color: Colors.white), // Ícone de saída
           onPressed: () {
           },
         ),
@@ -48,31 +52,43 @@ class DiciplinasScreen extends StatelessWidget {
           itemCount: disciplinas.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 16.0), //espacamento 
-              child: Container(
-                width: double.infinity,
-                height: 110, 
-                decoration: BoxDecoration(
-                  color: const Color(0xFFEEEEEE), 
-                  borderRadius: BorderRadius.circular(12), //arredondados 
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 6,
-                      offset: const Offset(0, 3), //sombra 
+              padding: const EdgeInsets.only(bottom: 16.0), 
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetalhesDisciplina(
+                        nomeDisciplina: disciplinas[index],
+                      ),
                     ),
-                  ],
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(20.0),
-                  child: Align(
-                    alignment: Alignment.bottomLeft, 
-                    child: Text(
-                      disciplinas[index],
-                      style: const TextStyle(
-                        color: Colors.black,
-                        fontSize: 24, 
-                        fontWeight: FontWeight.w500,
+                  );
+                },
+                child: Container(
+                  width: double.infinity,
+                  height: 110, 
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFEEEEEE), 
+                    borderRadius: BorderRadius.circular(12), 
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.08),
+                        blurRadius: 6,
+                        offset: const Offset(0, 3),
+                      ),
+                    ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: Align(
+                      alignment: Alignment.bottomLeft, 
+                      child: Text(
+                        disciplinas[index],
+                        style: const TextStyle(
+                          color: Colors.black,
+                          fontSize: 24, 
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ),
