@@ -5,7 +5,7 @@ import 'package:classmanagerapp/services/mock_backend_service.dart';
 class DiciplinasScreen extends StatelessWidget {
   const DiciplinasScreen({super.key});
 
-  final List<Map<String, String>> disciplinas = MockBackendService.instance.disciplines;
+  List<Map<String, String>> get disciplinas => MockBackendService.instance.disciplines;
 
   @override
   Widget build(BuildContext context) {
