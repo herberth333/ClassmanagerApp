@@ -24,7 +24,7 @@ class DiciplinasScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white), // Ícone de saída
+          icon: const Icon(Icons.logout, color: Colors.white), 
           onPressed: () {
           },
         ),
