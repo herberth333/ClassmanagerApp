@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../screen_calculadora/screen_calculadora.dart';
 
 class AcademicoScreen extends StatelessWidget {
   const AcademicoScreen({super.key});
@@ -21,7 +22,6 @@ class AcademicoScreen extends StatelessWidget {
           ),
         ),
         centerTitle: true,
-        // Ícone de perfil no canto direito
         actions: [
           IconButton(
             icon: const Icon(
@@ -40,66 +40,28 @@ class AcademicoScreen extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Botão 1: Horários
             _buildMenuButton(
-              icon: Icons.history, // Ícone de relógio com seta
+              icon: Icons.history,
               label: 'Horários',
               onTap: () {
-                // Navegar para tela de horários
               },
             ),
-            const SizedBox(width: 30), 
+            const SizedBox(width: 30),
+            // Botão 2: Calcular média
             _buildMenuButton(
-              icon: Icons.calculate_outlined, // Ícone de calculadora
-              label: 'Calcular\nmédia', 
+              icon: Icons.calculate_outlined,
+              label: 'Calcular\nmédia',
               onTap: () {
-                // Navegar para tela de calcular média
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const CalculadoraScreen(),
+                  ),
+                );
               },
             ),
           ],
         ),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: _blueColor,
-        selectedItemColor: Colors.white,
-        unselectedItemColor: Colors.white70,
-        currentIndex: 1, 
-        type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: true,
-        selectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.w500,
-          fontSize: 12,
-        ),
-        unselectedLabelStyle: const TextStyle(
-          fontWeight: FontWeight.normal,
-          fontSize: 12,
-        ),
-        items: const [
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.home_outlined, size: 26),
-            ),
-            label: 'Início',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.menu_book_outlined, size: 26),
-            ),
-            label: 'Acadêmico',
-          ),
-          BottomNavigationBarItem(
-            icon: Padding(
-              padding: EdgeInsets.only(bottom: 4.0),
-              child: Icon(Icons.settings_outlined, size: 26),
-            ),
-            label: 'Configurações',
-          ),
-        ],
-        onTap: (index) {
-          // gerencia a navegação entre as telas principais
-        },
       ),
     );
   }
@@ -128,11 +90,7 @@ class AcademicoScreen extends StatelessWidget {
                 ),
               ],
             ),
-            child: Icon(
-              icon,
-              size: 32,
-              color: Colors.black87, 
-            ),
+            child: Icon(icon, size: 32, color: Colors.black87),
           ),
           const SizedBox(height: 10),
           Text(

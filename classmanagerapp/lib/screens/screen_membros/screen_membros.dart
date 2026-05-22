@@ -17,7 +17,6 @@ class MembrosScreen extends StatelessWidget {
         leading: IconButton(
           icon: const Icon(Icons.home_outlined, color: Colors.white, size: 28),
           onPressed: () {
-            // lógica de navegação para voltar à tela inicial/dashboard aqui
             Navigator.pop(context);
           },
         ),
@@ -34,7 +33,6 @@ class MembrosScreen extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.all(20.0),
         children: [
-          // Abas de navegação 
           _buildTabs(),
           const SizedBox(height: 30),
 
@@ -60,7 +58,6 @@ class MembrosScreen extends StatelessWidget {
     );
   }
 
-  // Constrói a linha com as três abas
   Widget _buildTabs() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -74,7 +71,6 @@ class MembrosScreen extends StatelessWidget {
     );
   }
 
-  // Constrói o botão individual da aba
   Widget _buildTab(String title, Color color) {
     return Expanded(
       child: Container(
@@ -103,7 +99,6 @@ class MembrosScreen extends StatelessWidget {
     );
   }
 
-  // Constrói o título das seções
   Widget _buildSectionTitle(String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 15.0),
@@ -118,7 +113,6 @@ class MembrosScreen extends StatelessWidget {
     );
   }
 
-  // Constrói o card individual de cada usuário (Professor ou Aluno)
   Widget _buildListItem(String name) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12.0),
@@ -137,22 +131,20 @@ class MembrosScreen extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // Círculo com o ícone de usuário
           Container(
             width: 34,
             height: 34,
             decoration: const BoxDecoration(
-              color: Color(0xFFE0E0E0), // Fundo cinza do avatar
+              color: Color(0xFFE0E0E0), 
               shape: BoxShape.circle,
             ),
             child: const Icon(
               Icons.person,
-              color: Color(0xFF757575), // Cor do ícone
+              color: Color(0xFF757575), 
               size: 22,
             ),
           ),
           const SizedBox(width: 15),
-          // Nome do usuário
           Text(
             name,
             style: const TextStyle(
