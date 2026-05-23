@@ -1,26 +1,17 @@
 import 'package:flutter/material.dart';
 import 'detalhesDisciplina.dart';
+import 'package:classmanagerapp/services/mock_backend_service.dart';
 
 class DiciplinasScreen extends StatelessWidget {
   const DiciplinasScreen({super.key});
 
-  final List<String> disciplinas = const [
-    'Calculo 1',
-    'Calculo 2',
-    'Estatística',
-    'Redes',
-    'Programação de Redes', 
-    'Direito Penal',
-    'Experiencia Extencionista',
-    'Sociologia',
-    'Libras'
-  ];
+  List<Map<String, String>> get disciplinas => MockBackendService.instance.disciplines;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFF0569FF), 
+        backgroundColor: const Color(0xFF0569FF),
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
@@ -38,9 +29,8 @@ class DiciplinasScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined, color: Colors.white, size: 28), 
-            onPressed: () {
-            },
+            icon: const Icon(Icons.account_circle_outlined, color: Colors.white, size: 28),
+            onPressed: () {},
           ),
           const SizedBox(width: 8),
         ],
@@ -52,24 +42,25 @@ class DiciplinasScreen extends StatelessWidget {
           itemCount: disciplinas.length,
           itemBuilder: (context, index) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 16.0), 
+              padding: const EdgeInsets.only(bottom: 16.0),
               child: GestureDetector(
                 onTap: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
                       builder: (context) => DetalhesDisciplina(
-                        nomeDisciplina: disciplinas[index],
+                        nomeDisciplina: disciplinas[index]['name']!,
+                        disciplineId: disciplinas[index]['id']!,
                       ),
                     ),
                   );
                 },
                 child: Container(
                   width: double.infinity,
-                  height: 110, 
+                  height: 110,
                   decoration: BoxDecoration(
-                    color: const Color(0xFFEEEEEE), 
-                    borderRadius: BorderRadius.circular(12), 
+                    color: const Color(0xFFEEEEEE),
+                    borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
                         color: Colors.black.withOpacity(0.08),
@@ -81,12 +72,12 @@ class DiciplinasScreen extends StatelessWidget {
                   child: Padding(
                     padding: const EdgeInsets.all(20.0),
                     child: Align(
-                      alignment: Alignment.bottomLeft, 
+                      alignment: Alignment.bottomLeft,
                       child: Text(
-                        disciplinas[index],
+                        disciplinas[index]['name']!,
                         style: const TextStyle(
                           color: Colors.black,
-                          fontSize: 24, 
+                          fontSize: 24,
                           fontWeight: FontWeight.w500,
                         ),
                       ),

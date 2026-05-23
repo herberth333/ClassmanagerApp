@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:classmanagerapp/screens/home/activity_screen.dart';
 import 'topbar.dart';
 
 class DetalhesDisciplina extends StatefulWidget {
   final String nomeDisciplina;
+  final String disciplineId;
 
-  const DetalhesDisciplina({super.key, required this.nomeDisciplina});
+  const DetalhesDisciplina({
+    super.key,
+    required this.nomeDisciplina,
+    this.disciplineId = '1',
+  });
 
   @override
   State<DetalhesDisciplina> createState() => _DetalhesDisciplinaState();
@@ -55,14 +61,14 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                   },
                 ),
                 const SizedBox(height: 16),
-
+                
                 if (_abaAtual == 0) _buildMural(),
                 if (_abaAtual == 1) _buildAtividades(),
                 if (_abaAtual == 2) _buildMembros(),
               ],
             ),
           ),
-
+          
           if (_abaAtual == 0)
             Positioned(
               left: 16,
@@ -95,11 +101,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Icon(
-                        Icons.add_circle_outline,
-                        color: Colors.white,
-                        size: 22,
-                      ),
+                      Icon(Icons.add_circle_outline, color: Colors.white, size: 22),
                     ],
                   ),
                 ),
@@ -109,7 +111,6 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
       ),
     );
   }
-
 
   Widget _buildMural() {
     return Column(
@@ -143,11 +144,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
             children: [
               Row(
                 children: [
-                  const Icon(
-                    Icons.account_circle,
-                    size: 40,
-                    color: Colors.grey,
-                  ),
+                  const Icon(Icons.account_circle, size: 40, color: Colors.grey),
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,15 +171,12 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
                 style: TextStyle(fontSize: 14, height: 1.4),
               ),
               const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
-                ),
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -190,10 +184,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(
-                      Icons.account_circle_outlined,
-                      color: Colors.grey,
-                    ),
+                    const Icon(Icons.account_circle_outlined, color: Colors.grey),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: TextField(
@@ -206,11 +197,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(
-                        Icons.send_outlined,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
+                      icon: const Icon(Icons.send_outlined, color: Colors.grey, size: 20),
                       onPressed: () {},
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),
@@ -226,45 +213,48 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   }
 
   Widget _buildAtividades() {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Text(
-          '',
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
+    return ActivityScreen(
+      disciplineId: widget.disciplineId,
+      disciplineName: widget.nomeDisciplina,
     );
   }
 
   Widget _buildMembros() {
+    final professores = ['Juliana Silva', 'Calo Castro', 'Moacir Azevedo'];
+    final alunos = [
+      'Gabriel Touro',
+      'João Jonas',
+      'Daniel Lima',
+      'Agrípino Alves',
+      'Kacque Hornok',
+      'Paulo Jordan',
+      'Anglair Reis',
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Professores/Monitores:',
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 10),
-        _buildItemMembro('Juliana Silva'),
-        _buildItemMembro('Caio Castro'),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
+        ...professores.map((professor) => _buildItemMembro(professor)),
+        const SizedBox(height: 24),
         const Text(
           'Alunos:',
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 10),
-        _buildItemMembro('Gabriel Touro'),
-        _buildItemMembro('João Jonas'),
-        _buildItemMembro('Daniel Lima'),
+        const SizedBox(height: 12),
+        ...alunos.map((aluno) => _buildItemMembro(aluno)),
       ],
     );
   }
