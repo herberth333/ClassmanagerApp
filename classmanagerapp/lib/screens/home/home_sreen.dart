@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
 import 'package:classmanagerapp/core/widgets/diciplinas/diciplinas.dart';
-import 'package:classmanagerapp/screens/home/academico_screen.dart';
+import 'package:classmanagerapp/screens/screen_academico/screen_academico.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -16,14 +16,20 @@ class _HomeScreenState extends State<HomeScreen> {
   final List<Widget> _telas = [
     const DiciplinasScreen(),
     const AcademicoScreen(),
-    const Scaffold(body: Center(child: Text('Conteúdo das Configurações', style: TextStyle(fontSize: 20)))),
+    const Scaffold(
+      body: Center(
+        child: Text(
+          'Conteúdo das Configurações',
+          style: TextStyle(fontSize: 20),
+        ),
+      ),
+    ),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: _telas[_abaAtiva],
-
       bottomNavigationBar: CustomNavbar(
         currentIndex: _abaAtiva,
         onTap: (index) {
