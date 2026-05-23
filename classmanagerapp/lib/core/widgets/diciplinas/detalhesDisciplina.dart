@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/screens/home/activity_screen.dart';
+import 'topbar.dart';
 
 class DetalhesDisciplina extends StatefulWidget {
   final String nomeDisciplina;
@@ -16,7 +17,7 @@ class DetalhesDisciplina extends StatefulWidget {
 }
 
 class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
-  int _abaAtiva = 0;
+  int _abaAtual = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -41,29 +42,34 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
       ),
       body: Stack(
         children: [
-          Column(
-            children: [
-              // Abas
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-                child: Row(
-                  children: [
-                    _buildAbaItem('Mural', index: 0),
-                    const SizedBox(width: 8),
-                    _buildAbaItem('Atividades', index: 1),
-                    const SizedBox(width: 8),
-                    _buildAbaItem('Membros', index: 2),
-                  ],
+          SingleChildScrollView(
+            padding: const EdgeInsets.only(
+              left: 16.0,
+              right: 16.0,
+              top: 16.0,
+              bottom: 90.0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TopBar(
+                  abaSelecionada: _abaAtual,
+                  onAbaPressionada: (index) {
+                    setState(() {
+                      _abaAtual = index;
+                    });
+                  },
                 ),
-              ),
-              // Conteúdo das abas
-              Expanded(
-                child: _buildTabContent(),
-              ),
-            ],
+                const SizedBox(height: 16),
+                
+                if (_abaAtual == 0) _buildMural(),
+                if (_abaAtual == 1) _buildAtividades(),
+                if (_abaAtual == 2) _buildMembros(),
+              ],
+            ),
           ),
-          // Botão flutuante
-          if (_abaAtiva == 0)
+          
+          if (_abaAtual == 0)
             Positioned(
               left: 16,
               right: 16,
@@ -106,129 +112,114 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
     );
   }
 
-  Widget _buildTabContent() {
-    if (_abaAtiva == 1) {
-      return ActivityScreen(
-        disciplineId: widget.disciplineId,
-        disciplineName: widget.nomeDisciplina,
-      );
-    } else if (_abaAtiva == 2) {
-      return _buildMembrosTab();
-    } else {
-      return _buildMuralTab();
-    }
-  }
-
-  Widget _buildMuralTab() {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.only(left: 16.0, right: 16.0, top: 0, bottom: 90.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEEEE),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Text(
-              'Sala 22  →  18:45 ás 22:15',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w500,
-                color: Colors.black,
-              ),
+  Widget _buildMural() {
+    return Column(
+      children: [
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(vertical: 18.0, horizontal: 16.0),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEEEEE),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: const Text(
+            'Sala 22  →  18:45 ás 22:15',
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
             ),
           ),
-          const SizedBox(height: 16),
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(16.0),
-            decoration: BoxDecoration(
-              color: const Color(0xFFEEEEEE),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Icon(Icons.account_circle, size: 40, color: Colors.grey),
-                    const SizedBox(width: 8),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Text(
-                          'Juliana Silva',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 14,
-                          ),
-                        ),
-                        Text(
-                          '12:43 - 29/03/2026',
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                const Text(
-                  'SEMANA DE PESQUISA CLASSMANEGER',
-                  style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-                ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-                  style: TextStyle(fontSize: 14, height: 1.4),
-                ),
-                const SizedBox(height: 16),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 8.0,
-                    vertical: 4.0,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey.shade400),
-                  ),
-                  child: Row(
-                    children: [
-                      const Icon(Icons.account_circle_outlined, color: Colors.grey),
-                      const SizedBox(width: 8),
-                      const Expanded(
-                        child: TextField(
-                          decoration: InputDecoration(
-                            border: InputBorder.none,
-                            isDense: true,
-                            contentPadding: EdgeInsets.symmetric(vertical: 6),
-                          ),
+        ),
+        const SizedBox(height: 16),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16.0),
+          decoration: BoxDecoration(
+            color: const Color(0xFFEEEEEE),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  const Icon(Icons.account_circle, size: 40, color: Colors.grey),
+                  const SizedBox(width: 8),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      Text(
+                        'Juliana Silva',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
                         ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.send_outlined, color: Colors.grey, size: 20),
-                        onPressed: () {},
-                        constraints: const BoxConstraints(),
-                        padding: EdgeInsets.zero,
+                      Text(
+                        '12:43 - 29/03/2026',
+                        style: TextStyle(color: Colors.black54, fontSize: 12),
                       ),
                     ],
                   ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'SEMANA DE PESQUISA CLASSMANAGER',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
+                style: TextStyle(fontSize: 14, height: 1.4),
+              ),
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade400),
                 ),
-              ],
-            ),
+                child: Row(
+                  children: [
+                    const Icon(Icons.account_circle_outlined, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    const Expanded(
+                      child: TextField(
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          isDense: true,
+                          contentPadding: EdgeInsets.symmetric(vertical: 6),
+                          hintText: 'Escreva um comentário...',
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.send_outlined, color: Colors.grey, size: 20),
+                      onPressed: () {},
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+              ),
+            ],
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
-  Widget _buildMembrosTab() {
+  Widget _buildAtividades() {
+    return ActivityScreen(
+      disciplineId: widget.disciplineId,
+      disciplineName: widget.nomeDisciplina,
+    );
+  }
+
+  Widget _buildMembros() {
     final professores = ['Juliana Silva', 'Calo Castro', 'Moacir Azevedo'];
     final alunos = [
       'Gabriel Touro',
@@ -240,119 +231,74 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
       'Anglair Reis',
     ];
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Professores/Monitores:',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...professores.map((professor) => _buildItemMembro(professor)),
+        const SizedBox(height: 24),
+        const Text(
+          'Alunos:',
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...alunos.map((aluno) => _buildItemMembro(aluno)),
+      ],
+    );
+  }
+
+  Widget _buildItemMembro(String nome) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 8.0),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF2F2F2),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: Colors.grey.shade300, width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.15),
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
         children: [
-          const Text(
-            'Professores/Monitores:',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
+          Container(
+            width: 34,
+            height: 34,
+            decoration: const BoxDecoration(
+              color: Color(0xFFE0E0E0),
+              shape: BoxShape.circle,
             ),
+            child: const Icon(Icons.person, color: Color(0xFF757575), size: 22),
           ),
-          const SizedBox(height: 12),
-          ...professores.map(
-            (professor) => Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEEEEE),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.account_circle,
-                    size: 32,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    professor,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Alunos:',
-            style: TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.w600,
-              color: Colors.black87,
-            ),
-          ),
-          const SizedBox(height: 12),
-          ...alunos.map(
-            (aluno) => Container(
-              margin: const EdgeInsets.only(bottom: 8),
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: const Color(0xFFEEEEEE),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Row(
-                children: [
-                  const Icon(
-                    Icons.account_circle,
-                    size: 32,
-                    color: Colors.grey,
-                  ),
-                  const SizedBox(width: 12),
-                  Text(
-                    aluno,
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
+          const SizedBox(width: 15),
+          Text(
+            nome,
+            style: const TextStyle(
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+              color: Colors.black,
             ),
           ),
         ],
       ),
     );
   }
-
-  Widget _buildAbaItem(String label, {required int index}) {
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          setState(() {
-            _abaAtiva = index;
-          });
-        },
-        child: Container(
-          height: 45,
-          decoration: BoxDecoration(
-            color: _abaAtiva == index
-                ? const Color(0xFF0569FF)
-                : const Color(0xFF666666),
-            borderRadius: BorderRadius.circular(8),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: const TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-                fontSize: 15,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 }
+
+```
