@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../screen_calculadora/screen_calculadora.dart';
 
 class AcademicoScreen extends StatelessWidget {
@@ -40,10 +41,12 @@ class AcademicoScreen extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Botão 1: Horários
             _buildMenuButton(
               icon: Icons.history,
               label: 'Horários',
               onTap: () {
+                // Navegar para tela de horários
               },
             ),
             const SizedBox(width: 30),
@@ -52,6 +55,7 @@ class AcademicoScreen extends StatelessWidget {
               icon: Icons.calculate_outlined,
               label: 'Calcular\nmédia',
               onTap: () {
+                // Abre a calculadora
                 Navigator.push(
                   context,
                   MaterialPageRoute(
@@ -66,6 +70,7 @@ class AcademicoScreen extends StatelessWidget {
     );
   }
 
+  //widgets
   Widget _buildMenuButton({
     required IconData icon,
     required String label,
