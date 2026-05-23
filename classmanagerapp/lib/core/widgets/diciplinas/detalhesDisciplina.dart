@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'topbar.dart';
+import 'criarAtividade.dart';  
 
 class DetalhesDisciplina extends StatefulWidget {
   final String nomeDisciplina;
@@ -63,7 +64,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
             ),
           ),
 
-          if (_abaAtual == 0)
+          if (_abaAtual == 0 || _abaAtual == 1)
             Positioned(
               left: 16,
               right: 16,
@@ -82,20 +83,32 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                   ],
                 ),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    if (_abaAtual == 0) {
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => CriarAtividadeScreen(
+                            nomeDisciplina: widget.nomeDisciplina,
+                          ),
+                        ),
+                      );
+                    }
+                  },
                   borderRadius: BorderRadius.circular(12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
+                    children: [
                       Text(
-                        'Nova publicação ',
-                        style: TextStyle(
+                        _abaAtual == 1 ? 'Adicionar Atividade ' : 'Nova publicação ',
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: 18,
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Icon(
+                      const Icon(
                         Icons.add_circle_outline,
                         color: Colors.white,
                         size: 22,
@@ -109,7 +122,6 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
       ),
     );
   }
-
 
   Widget _buildMural() {
     return Column(
@@ -226,12 +238,21 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   }
 
   Widget _buildAtividades() {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(20.0),
+    return Container(
+      width: double.infinity,
+      height: 480, 
+      decoration: BoxDecoration(
+        color: const Color(0xFFEEEEEE),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: const Center(
         child: Text(
-          '',
-          style: TextStyle(fontSize: 16),
+          'Nenhuma atividade postada ainda.',
+          style: TextStyle(
+            color: Colors.black54, 
+            fontSize: 16, 
+            fontWeight: FontWeight.w500
+          ),
         ),
       ),
     );
