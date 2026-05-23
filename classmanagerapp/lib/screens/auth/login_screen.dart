@@ -18,7 +18,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _isPasswordVisible = false;
 
-  // Definindo a cor principal com base no seu código hexadecimal
   final Color _primaryBlue = const Color(0xFF0569FF);
 
   void _entrar() async {
@@ -67,18 +66,16 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              // Imagem do logotipo
               Image.asset('assets/images/logo_class_manager.png', height: 150),
               const SizedBox(height: 16),
 
-              // Texto de boas-vindas
               const Text(
                 'Seja bem vindo!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E212B), // Um tom escuro próximo da imagem
+                  color: Color(0xFF1E212B), 
                 ),
               ),
               const SizedBox(height: 40),
