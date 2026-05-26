@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:classmanagerapp/screens/home/activity_screen.dart';
 import 'topbar.dart';
 import 'criarAtividade.dart';  
 
 class DetalhesDisciplina extends StatefulWidget {
   final String nomeDisciplina;
+  final String disciplineId;
 
-  const DetalhesDisciplina({super.key, required this.nomeDisciplina});
+  const DetalhesDisciplina({
+    super.key,
+    required this.nomeDisciplina,
+    this.disciplineId = '1',
+  });
 
   @override
   State<DetalhesDisciplina> createState() => _DetalhesDisciplinaState();
@@ -186,7 +192,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
               ),
               const SizedBox(height: 8),
               const Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
                 style: TextStyle(fontSize: 14, height: 1.4),
               ),
               const SizedBox(height: 16),
@@ -259,33 +265,41 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   }
 
   Widget _buildMembros() {
+    final professores = ['Juliana Silva', 'Calo Castro', 'Moacir Azevedo'];
+    final alunos = [
+      'Gabriel Touro',
+      'João Jonas',
+      'Daniel Lima',
+      'Agrípino Alves',
+      'Kacque Hornok',
+      'Paulo Jordan',
+      'Anglair Reis',
+    ];
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
           'Professores/Monitores:',
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 10),
-        _buildItemMembro('Juliana Silva'),
-        _buildItemMembro('Caio Castro'),
-        const SizedBox(height: 20),
+        const SizedBox(height: 12),
+        ...professores.map((professor) => _buildItemMembro(professor)),
+        const SizedBox(height: 24),
         const Text(
           'Alunos:',
           style: TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.bold,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
             color: Colors.black87,
           ),
         ),
-        const SizedBox(height: 10),
-        _buildItemMembro('Gabriel Touro'),
-        _buildItemMembro('João Jonas'),
-        _buildItemMembro('Daniel Lima'),
+        const SizedBox(height: 12),
+        ...alunos.map((aluno) => _buildItemMembro(aluno)),
       ],
     );
   }
