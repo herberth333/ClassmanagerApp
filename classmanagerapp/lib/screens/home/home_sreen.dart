@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
 import 'package:classmanagerapp/core/widgets/diciplinas/diciplinas.dart';
+import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
+import 'package:classmanagerapp/screens/activities/student_activities_screen.dart';
 import 'package:classmanagerapp/screens/screen_academico/screen_academico.dart';
+import 'package:classmanagerapp/screens/settings/settings_screen.dart';
+import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -11,33 +13,22 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  int _abaAtiva = 0;
+  int _selectedIndex = 0;
 
-  final List<Widget> _telas = [
-    const DiciplinasScreen(),
-    const AcademicoScreen(),
-    const Scaffold(
-      body: Center(
-        child: Text(
-          'Conteúdo das Configurações',
-          style: TextStyle(fontSize: 20),
-        ),
-      ),
-    ),
+  static const List<Widget> _screens = [
+    DiciplinasScreen(),
+    StudentActivitiesScreen(),
+    AcademicoScreen(),
+    SettingsScreen(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _telas[_abaAtiva],
-
+      body: IndexedStack(index: _selectedIndex, children: _screens),
       bottomNavigationBar: CustomNavbar(
-        currentIndex: _abaAtiva,
-        onTap: (index) {
-          setState(() {
-            _abaAtiva = index;
-          });
-        },
+        currentIndex: _selectedIndex,
+        onTap: (index) => setState(() => _selectedIndex = index),
       ),
     );
   }

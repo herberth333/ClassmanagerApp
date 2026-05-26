@@ -61,14 +61,14 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                   },
                 ),
                 const SizedBox(height: 16),
-                
+
                 if (_abaAtual == 0) _buildMural(),
                 if (_abaAtual == 1) _buildAtividades(),
                 if (_abaAtual == 2) _buildMembros(),
               ],
             ),
           ),
-          
+
           if (_abaAtual == 0)
             Positioned(
               left: 16,
@@ -101,7 +101,11 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                           fontWeight: FontWeight.w500,
                         ),
                       ),
-                      Icon(Icons.add_circle_outline, color: Colors.white, size: 22),
+                      Icon(
+                        Icons.add_circle_outline,
+                        color: Colors.white,
+                        size: 22,
+                      ),
                     ],
                   ),
                 ),
@@ -144,7 +148,11 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.account_circle, size: 40, color: Colors.grey),
+                  const Icon(
+                    Icons.account_circle,
+                    size: 40,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(width: 8),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -176,7 +184,10 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
               ),
               const SizedBox(height: 16),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 8.0,
+                  vertical: 4.0,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.white,
                   borderRadius: BorderRadius.circular(8),
@@ -184,7 +195,10 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.account_circle_outlined, color: Colors.grey),
+                    const Icon(
+                      Icons.account_circle_outlined,
+                      color: Colors.grey,
+                    ),
                     const SizedBox(width: 8),
                     const Expanded(
                       child: TextField(
@@ -197,7 +211,11 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.send_outlined, color: Colors.grey, size: 20),
+                      icon: const Icon(
+                        Icons.send_outlined,
+                        color: Colors.grey,
+                        size: 20,
+                      ),
                       onPressed: () {},
                       padding: EdgeInsets.zero,
                       constraints: const BoxConstraints(),

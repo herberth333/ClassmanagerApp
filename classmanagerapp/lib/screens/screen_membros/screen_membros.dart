@@ -13,7 +13,7 @@ class MembrosScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: _blueColor,
         elevation: 0,
-        // Ícone da casinha 
+        // Ícone da casinha
         leading: IconButton(
           icon: const Icon(Icons.home_outlined, color: Colors.white, size: 28),
           onPressed: () {
@@ -135,14 +135,10 @@ class MembrosScreen extends StatelessWidget {
             width: 34,
             height: 34,
             decoration: const BoxDecoration(
-              color: Color(0xFFE0E0E0), 
+              color: Color(0xFFE0E0E0),
               shape: BoxShape.circle,
             ),
-            child: const Icon(
-              Icons.person,
-              color: Color(0xFF757575), 
-              size: 22,
-            ),
+            child: const Icon(Icons.person, color: Color(0xFF757575), size: 22),
           ),
           const SizedBox(width: 15),
           Text(

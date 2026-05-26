@@ -5,7 +5,8 @@ import 'package:classmanagerapp/services/mock_backend_service.dart';
 class DiciplinasScreen extends StatelessWidget {
   const DiciplinasScreen({super.key});
 
-  List<Map<String, String>> get disciplinas => MockBackendService.instance.disciplines;
+  List<Map<String, String>> get disciplinas =>
+      MockBackendService.instance.disciplines;
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +16,8 @@ class DiciplinasScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white), 
-          onPressed: () {
-          },
+          icon: const Icon(Icons.logout, color: Colors.white),
+          onPressed: () {},
         ),
         title: const Text(
           'Class Manager',
@@ -29,7 +29,11 @@ class DiciplinasScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined, color: Colors.white, size: 28),
+            icon: const Icon(
+              Icons.account_circle_outlined,
+              color: Colors.white,
+              size: 28,
+            ),
             onPressed: () {},
           ),
           const SizedBox(width: 8),
