@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/screens/screen_atividade_aluno/screen_atividade_aluno.dart';
+import 'package:classmanagerapp/screens/screen_atividade_professor/screen_atividade_professor.dart';
 
 import 'topbar.dart';
 
@@ -227,7 +228,52 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   }
 
   Widget _buildAtividades() {
-    return AtividadeAlunoContent(nomeDisciplina: widget.nomeDisciplina);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: Alignment.centerRight,
+          child: SizedBox(
+            height: 34,
+            child: ElevatedButton.icon(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF666666),
+                elevation: 2,
+                padding: const EdgeInsets.symmetric(horizontal: 12),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AtividadeProfessorScreen(
+                      nomeDisciplina: widget.nomeDisciplina,
+                    ),
+                  ),
+                );
+              },
+              icon: const Icon(
+                Icons.school_outlined,
+                color: Colors.white,
+                size: 16,
+              ),
+              label: const Text(
+                'Professor',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(height: 10),
+        AtividadeAlunoContent(nomeDisciplina: widget.nomeDisciplina),
+      ],
+    );
   }
 
   Widget _buildMembros() {
