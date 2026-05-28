@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:classmanagerapp/screens/screen_atividade_aluno/screen_atividade_aluno.dart';
+
 import 'topbar.dart';
 
 class DetalhesDisciplina extends StatefulWidget {
@@ -109,7 +111,6 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
       ),
     );
   }
-
 
   Widget _buildMural() {
     return Column(
@@ -226,15 +227,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   }
 
   Widget _buildAtividades() {
-    return const Center(
-      child: Padding(
-        padding: EdgeInsets.all(20.0),
-        child: Text(
-          '',
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-    );
+    return AtividadeAlunoContent(nomeDisciplina: widget.nomeDisciplina);
   }
 
   Widget _buildMembros() {
