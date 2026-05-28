@@ -1,5 +1,8 @@
+import 'package:classmanagerapp/core/services/activity_service.dart';
+import 'package:classmanagerapp/core/models/activity.dart';
+import 'package:classmanagerapp/core/widgets/activities/activity_card.dart';
+import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:classmanagerapp/services/activity_service.dart';
 
 class AddActivityScreen extends StatefulWidget {
   final String disciplineId;

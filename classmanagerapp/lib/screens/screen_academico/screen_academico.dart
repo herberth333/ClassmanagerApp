@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
+import 'package:classmanagerapp/core/widgets/disciplinas/disciplinas.dart';
+import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
 
-import '../screen_calculadora/screen_calculadora.dart';
 
 class AcademicoScreen extends StatelessWidget {
   const AcademicoScreen({super.key});

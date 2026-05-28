@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
-import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
-import 'package:classmanagerapp/core/widgets/disciplinas/disciplinas.dart'; 
+import 'package:classmanagerapp/screens/academico/academico_screen.dart';
+import 'package:classmanagerapp/screens/home/disciplinas_screen.dart';
 import 'package:classmanagerapp/screens/screen_academico/screen_academico.dart';
+import 'package:classmanagerapp/screens/screen_calculadora/screen_calculadora.dart';
+import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

@@ -1,6 +1,7 @@
+import 'package:classmanagerapp/core/widgets/activities/activity_screen.dart';
+import 'package:classmanagerapp/core/widgets/disciplinas/top_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:classmanagerapp/screens/home/activity_screen.dart';
-import 'topbar.dart';
+
 
 class DetalhesDisciplina extends StatefulWidget {
   final String nomeDisciplina;

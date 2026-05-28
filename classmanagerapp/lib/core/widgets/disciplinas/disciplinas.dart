@@ -1,6 +1,6 @@
+import 'package:classmanagerapp/core/services/mock_backend_service.dart';
 import 'package:flutter/material.dart';
-import 'detalhesDisciplina.dart';
-import 'package:classmanagerapp/services/mock_backend_service.dart';
+import 'package:classmanagerapp/screens/academico/academico_screen.dart';
 
 class DisciplinasScreen extends StatelessWidget {
   const DisciplinasScreen({super.key});

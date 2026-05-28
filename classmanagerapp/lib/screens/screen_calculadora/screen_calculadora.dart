@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
+
 
 class CalculadoraScreen extends StatefulWidget {
   const CalculadoraScreen({super.key});

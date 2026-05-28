@@ -1,6 +1,6 @@
+import 'package:classmanagerapp/core/services/schedule_service.dart';
+import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
 import 'package:flutter/material.dart';
-import 'package:classmanagerapp/models/schedule.dart';
-import 'package:classmanagerapp/services/schedule_service.dart';
 import 'package:classmanagerapp/core/widgets/schedules/schedule_card.dart';
 
 class SchedulesScreen extends StatefulWidget {
