@@ -300,5 +300,3 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
     );
   }
 }
-
-```

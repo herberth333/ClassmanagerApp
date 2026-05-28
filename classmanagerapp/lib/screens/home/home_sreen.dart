@@ -30,6 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: _telas[_abaAtiva],
+
       bottomNavigationBar: CustomNavbar(
         currentIndex: _abaAtiva,
         onTap: (index) {

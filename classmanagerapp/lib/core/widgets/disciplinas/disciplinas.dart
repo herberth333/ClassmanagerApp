@@ -15,8 +15,9 @@ class DiciplinasScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white),
-          onPressed: () {},
+          icon: const Icon(Icons.logout, color: Colors.white), 
+          onPressed: () {
+          },
         ),
         title: const Text(
           'Class Manager',
