@@ -14,7 +14,7 @@ class CustomNavbar extends StatelessWidget {
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       backgroundColor: const Color(0xFF0569FF), 
-      type: BottomNavigationBarType.fixed,
+      type: BottomNavigationBarType.fixed, 
       currentIndex: currentIndex,
       onTap: onTap,
       selectedItemColor: Colors.white,
@@ -28,6 +28,7 @@ class CustomNavbar extends StatelessWidget {
         fontWeight: FontWeight.w600,
         fontSize: 12,
       ),
+      // Exatamente os 3 itens mostrados nas fotos
       items: const [
         BottomNavigationBarItem(
           icon: Padding(
