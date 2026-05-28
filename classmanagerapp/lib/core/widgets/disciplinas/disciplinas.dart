@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'detalhesDisciplina.dart';
 import 'package:classmanagerapp/services/mock_backend_service.dart';
 
-class DiciplinasScreen extends StatelessWidget {
-  const DiciplinasScreen({super.key});
+class DisciplinasScreen extends StatelessWidget {
+  const DisciplinasScreen({super.key});
 
   List<Map<String, String>> get disciplinas => MockBackendService.instance.disciplines;
 

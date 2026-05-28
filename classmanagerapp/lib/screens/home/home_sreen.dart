@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/core/widgets/navbar/navbar.dart';
-import 'package:classmanagerapp/core/widgets/diciplinas/diciplinas.dart'; 
+import 'package:classmanagerapp/core/widgets/disciplinas/disciplinas.dart'; 
 import 'package:classmanagerapp/screens/screen_academico/screen_academico.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   
   final List<Widget> _telas = [
-    const DiciplinasScreen(), 
+    const DisciplinasScreen(), 
     const AcademicoScreen(), 
     const Scaffold(           
       body: Center(
