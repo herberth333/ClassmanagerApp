@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/auth/login_screen.dart'; 
-
+//arquivo para rodar o projeto
 void main() {
   runApp(const MyApp());
 }
