@@ -1,7 +1,8 @@
-import 'package:classmanagerapp/core/widgets/activities/activity_screen.dart';
-import 'package:classmanagerapp/core/widgets/disciplinas/top_bar.dart';
 import 'package:flutter/material.dart';
-
+// Se a ActivityScreen estiver em outra pasta, o VS Code vai avisar aqui.
+// É só clicar na palavra ActivityScreen, apertar Ctrl + Ponto (.) e importar.
+import 'package:classmanagerapp/screens/home/activity_screen.dart'; 
+import 'topbar.dart'; 
 
 class DetalhesDisciplina extends StatefulWidget {
   final String nomeDisciplina;
@@ -82,7 +83,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.15),
+                      color: Colors.black.withValues(alpha: 0.15), // CORREÇÃO AQUI
                       blurRadius: 8,
                       offset: const Offset(0, 4),
                     ),
@@ -270,7 +271,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
         border: Border.all(color: Colors.grey.shade300, width: 1),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.15),
+            color: Colors.black.withValues(alpha: 0.15), // CORREÇÃO AQUI
             blurRadius: 4,
             offset: const Offset(0, 2),
           ),
