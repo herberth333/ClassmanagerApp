@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/services/auth/auth_service.dart';
 import 'package:classmanagerapp/screens/home/home_sreen.dart';
+import 'package:classmanagerapp/screens/auth/sign_up_screen.dart';
+import 'package:classmanagerapp/screens/auth/forgot_password_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -18,7 +20,6 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _isPasswordVisible = false;
 
-  // Definindo a cor principal com base no seu código hexadecimal
   final Color _primaryBlue = const Color(0xFF0569FF);
 
   void _entrar() async {
@@ -67,23 +68,20 @@ class _LoginScreenState extends State<LoginScreen> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              // Imagem do logotipo
               Image.asset('assets/images/logo_class_manager.png', height: 150),
               const SizedBox(height: 16),
 
-              // Texto de boas-vindas
               const Text(
                 'Seja bem vindo!',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E212B), // Um tom escuro próximo da imagem
+                  color: Color(0xFF1E212B),
                 ),
               ),
               const SizedBox(height: 40),
 
-              // Rótulo E-mail
               const Text(
                 'E-mail',
                 style: TextStyle(
@@ -94,7 +92,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Campo E-mail
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -121,7 +118,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Rótulo Senha
               const Text(
                 'Senha',
                 style: TextStyle(
@@ -132,7 +128,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Campo Senha
               TextField(
                 controller: _senhaController,
                 obscureText: !_isPasswordVisible,
@@ -172,7 +167,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Botão Acessar
               SizedBox(
                 height: 55,
                 child: ElevatedButton(
@@ -199,13 +193,10 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Link "Esqueceu a senha?"
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
-                  onPressed: () {
-                    // Lógica para recuperação de senha
-                  },
+                  onPressed: () {},
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: Size.zero,
@@ -216,8 +207,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       color: _primaryBlue,
                       fontWeight: FontWeight.w600,
-                      decoration:
-                          TextDecoration.underline, // Sublinhado como na imagem
+                      decoration: TextDecoration.underline,
                       decorationColor: _primaryBlue,
                     ),
                   ),
@@ -226,7 +216,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
               const SizedBox(height: 48),
 
-              // Seção "Primeira vez aqui?"
               Center(
                 child: Column(
                   children: [
@@ -237,7 +226,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 4),
                     TextButton(
                       onPressed: () {
-                        // Lógica para cadastro
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignUpScreen(),
+                          ),
+                        );
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
@@ -249,8 +243,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: _primaryBlue,
                           fontWeight: FontWeight.w600,
-                          decoration: TextDecoration
-                              .underline, // Sublinhado como na imagem
+                          decoration: TextDecoration.underline,
                           decorationColor: _primaryBlue,
                         ),
                       ),
