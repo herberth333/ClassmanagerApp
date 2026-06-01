@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:classmanagerapp/services/auth/auth_service.dart';
+import 'package:classmanagerapp/screens/auth/login_screen.dart';
 import 'detalhesDisciplina.dart';
 
 class DiciplinasScreen extends StatelessWidget {
@@ -18,6 +20,8 @@ class DiciplinasScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final AuthService authService = AuthService();
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF0569FF), 
@@ -25,7 +29,15 @@ class DiciplinasScreen extends StatelessWidget {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.logout, color: Colors.white), 
-          onPressed: () {
+          onPressed: () async {
+            await authService.fazerLogout();
+            if (context.mounted) {
+              Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginScreen()),
+                (route) => false,
+              );
+            }
           },
         ),
         title: const Text(
