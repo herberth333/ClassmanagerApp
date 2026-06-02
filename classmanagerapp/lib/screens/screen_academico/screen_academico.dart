@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../screen_calculadora/screen_calculadora.dart';
+import '../screen_horarios/screen_horarios.dart';
 
 class AcademicoScreen extends StatelessWidget {
   const AcademicoScreen({super.key});
@@ -46,7 +47,12 @@ class AcademicoScreen extends StatelessWidget {
               icon: Icons.history,
               label: 'Horários',
               onTap: () {
-                // Navegar para tela de horários
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HorariosScreen(),
+                  ),
+                );
               },
             ),
             const SizedBox(width: 30),
