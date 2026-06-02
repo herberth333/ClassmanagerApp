@@ -1,11 +1,23 @@
-class AuthService {
-  Future<bool> fazerLogin(String email, String senha) async {
-    await Future.delayed(const Duration(seconds: 1));
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 
-    if (email == "1" && senha == "1") {
+class AuthService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<bool> fazerLogin(String email, String senha) async {
+    try {
+      await _auth.signInWithEmailAndPassword(
+        email: email.trim(),
+        password: senha,
+      );
       return true; 
-    } else {
+    } catch (e) {
+      debugPrint("Erro no login: $e");
       return false; 
     }
+  }
+
+  Future<void> fazerLogout() async {
+    await _auth.signOut();
   }
 }

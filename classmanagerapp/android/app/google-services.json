@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "952623983658",
+    "project_id": "classmanagerapp-37901",
+    "storage_bucket": "classmanagerapp-37901.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952623983658:android:69ae0b03c8fd541bc62753",
+        "android_client_info": {
+          "package_name": "com.example.classmanagerapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAIezrzBS2Fb7oLsjmGqhZhN2mDrly8WtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
