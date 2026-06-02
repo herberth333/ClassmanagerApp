@@ -20,190 +20,228 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final Color _primaryBlue = const Color(0xFF0569FF);
 
   @override
+  void dispose() {
+    _nomeController.dispose();
+    _matriculaController.dispose();
+    _emailController.dispose();
+    _senhaController.dispose();
+    _confirmeSenhaController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 60.0),
+      body: SafeArea(
         child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Text(
-                'Solicitar Acesso',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E212B),
-                ),
-              ),
-              const SizedBox(height: 32),
-
-              Text(
-                'Seu Nome:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _nomeController,
-                decoration: _getInputDecoration(hintText: 'Digite seu nome completo'),
-              ),
-              const SizedBox(height: 16),
-
-              Text(
-                'Matrícula:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _matriculaController,
-                decoration: _getInputDecoration(hintText: 'Digite sua matrícula'),
-              ),
-              const SizedBox(height: 16),
-
-              Text(
-                'E-mail:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: _getInputDecoration(hintText: 'Digite um email'),
-              ),
-              const SizedBox(height: 16),
-
-              Text(
-                'Digite uma senha:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _senhaController,
-                obscureText: !_isPasswordVisible,
-                decoration: _getInputDecoration(
-                  hintText: '**********',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isPasswordVisible = !_isPasswordVisible;
-                      });
+          child: Padding(
+            // Ajustei o padding vertical para compensar o SafeArea
+            padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Botão voltar alinhado à esquerda
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.pop(context); // Retorna para a tela de login
                     },
-                  ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(top: 4.0),
-                child: Text(
-                  'Crie uma senha forte.',
-                  style: TextStyle(color: Colors.grey, fontSize: 12),
-                ),
-              ),
-              const SizedBox(height: 16),
-
-              Text(
-                'Confirme a senha:',
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF333333),
-                ),
-              ),
-              const SizedBox(height: 4),
-              TextField(
-                controller: _confirmeSenhaController,
-                obscureText: !_isConfirmPasswordVisible,
-                decoration: _getInputDecoration(
-                  hintText: '**********',
-                  suffixIcon: IconButton(
-                    icon: Icon(
-                      _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                      color: Colors.grey,
-                    ),
-                    onPressed: () {
-                      setState(() {
-                        _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                      });
-                    },
-                  ),
-                ),
-              ),
-              const SizedBox(height: 48),
-
-              SizedBox(
-                height: 55,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _primaryBlue,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                    ),
-                  ),
-                  onPressed: () {},
-                  child: const Text(
-                    'Solicitar Acesso',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                    child: Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF2F2F2),
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      child: const Icon(
+                        Icons.arrow_back_ios_new,
+                        size: 18,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 24),
+                
+                const SizedBox(height: 24),
 
-              Center(
-                child: RichText(
+                const Text(
+                  'Solicitar Acesso',
                   textAlign: TextAlign.center,
-                  text: TextSpan(
-                    style: const TextStyle(color: Colors.black87, fontSize: 13, height: 1.5),
-                    children: [
-                      const TextSpan(text: 'Ao continuar, você concorda com os '),
-                      TextSpan(
-                        text: 'Termos de Serviços',
-                        style: TextStyle(
-                          color: _primaryBlue,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                      const TextSpan(text: ' e de '),
-                      TextSpan(
-                        text: 'Política de Privacidade',
-                        style: TextStyle(
-                          color: _primaryBlue,
-                          fontWeight: FontWeight.w600,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                      const TextSpan(text: '.'),
-                    ],
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.w800,
+                    color: Color(0xFF1E212B),
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 32),
+
+                const Text(
+                  'Seu Nome:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: _nomeController,
+                  decoration: _getInputDecoration(hintText: 'Digite seu nome completo'),
+                ),
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Matrícula:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: _matriculaController,
+                  decoration: _getInputDecoration(hintText: 'Digite sua matrícula'),
+                ),
+                const SizedBox(height: 16),
+
+                const Text(
+                  'E-mail:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: _emailController,
+                  keyboardType: TextInputType.emailAddress,
+                  decoration: _getInputDecoration(hintText: 'Digite um email'),
+                ),
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Digite uma senha:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: _senhaController,
+                  obscureText: !_isPasswordVisible,
+                  decoration: _getInputDecoration(
+                    hintText: '**********',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.only(top: 4.0),
+                  child: Text(
+                    'Crie uma senha forte.',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                const Text(
+                  'Confirme a senha:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                TextField(
+                  controller: _confirmeSenhaController,
+                  obscureText: !_isConfirmPasswordVisible,
+                  decoration: _getInputDecoration(
+                    hintText: '**********',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isConfirmPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Colors.grey,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 48),
+
+                SizedBox(
+                  height: 55,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: _primaryBlue,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30.0),
+                      ),
+                    ),
+                    onPressed: () {},
+                    child: const Text(
+                      'Solicitar Acesso',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+
+                Center(
+                  child: RichText(
+                    textAlign: TextAlign.center,
+                    text: TextSpan(
+                      style: const TextStyle(color: Colors.black87, fontSize: 13, height: 1.5),
+                      children: [
+                        const TextSpan(text: 'Ao continuar, você concorda com os '),
+                        TextSpan(
+                          text: 'Termos de Serviços',
+                          style: TextStyle(
+                            color: _primaryBlue,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        const TextSpan(text: ' e de '),
+                        TextSpan(
+                          text: 'Política de Privacidade',
+                          style: TextStyle(
+                            color: _primaryBlue,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                          ),
+                        ),
+                        const TextSpan(text: '.'),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

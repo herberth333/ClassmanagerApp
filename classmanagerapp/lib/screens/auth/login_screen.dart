@@ -3,7 +3,6 @@ import 'package:classmanagerapp/services/auth/auth_service.dart';
 import 'package:classmanagerapp/screens/home/home_sreen.dart';
 import 'package:classmanagerapp/screens/auth/sign_up_screen.dart';
 import 'package:classmanagerapp/screens/auth/forgot_password_page.dart';
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
 
