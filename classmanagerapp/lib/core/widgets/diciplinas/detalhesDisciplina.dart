@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/screens/screen_atividade_aluno/screen_atividade_aluno.dart';
 import 'package:classmanagerapp/screens/screen_atividade_professor/screen_atividade_professor.dart';
+import 'package:classmanagerapp/services/aluno_service.dart';
+import 'package:classmanagerapp/services/professor_service.dart';
+import 'package:classmanagerapp/services/monitor_service.dart';
 
 import 'topbar.dart';
 
@@ -15,6 +18,9 @@ class DetalhesDisciplina extends StatefulWidget {
 
 class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   int _abaAtual = 0;
+  final AlunoService _alunoService = AlunoService();
+  final ProfessorService _professorService = ProfessorService();
+  final MonitorService _monitorService = MonitorService();
 
   @override
   Widget build(BuildContext context) {
@@ -280,8 +286,9 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // Seção: Professores
         const Text(
-          'Professores/Monitores:',
+          'Professores:',
           style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.bold,
@@ -289,9 +296,51 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
           ),
         ),
         const SizedBox(height: 10),
-        _buildItemMembro('Juliana Silva'),
-        _buildItemMembro('Caio Castro'),
+        StreamBuilder<List<Professor>>(
+          stream: _professorService.getAllProfessores(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) return Text('Erro: ${snapshot.error}');
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final list = snapshot.data ?? [];
+            if (list.isEmpty) return const Text('Nenhum professor encontrado.');
+            return Column(
+              children: list.map((p) => _buildItemMembro(p.nome)).toList(),
+            );
+          },
+        ),
+
         const SizedBox(height: 20),
+
+        // Seção: Monitores
+        const Text(
+          'Monitores:',
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: Colors.black87,
+          ),
+        ),
+        const SizedBox(height: 10),
+        StreamBuilder<List<Monitor>>(
+          stream: _monitorService.getAllMonitores(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) return Text('Erro: ${snapshot.error}');
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final list = snapshot.data ?? [];
+            if (list.isEmpty) return const Text('Nenhum monitor encontrado.');
+            return Column(
+              children: list.map((m) => _buildItemMembro(m.nome)).toList(),
+            );
+          },
+        ),
+
+        const SizedBox(height: 20),
+
+        // Seção: Alunos
         const Text(
           'Alunos:',
           style: TextStyle(
@@ -301,9 +350,20 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
           ),
         ),
         const SizedBox(height: 10),
-        _buildItemMembro('Gabriel Touro'),
-        _buildItemMembro('João Jonas'),
-        _buildItemMembro('Daniel Lima'),
+        StreamBuilder<List<Aluno>>(
+          stream: _alunoService.getAllAlunos(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) return Text('Erro: ${snapshot.error}');
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            final list = snapshot.data ?? [];
+            if (list.isEmpty) return const Text('Nenhum aluno encontrado.');
+            return Column(
+              children: list.map((a) => _buildItemMembro(a.nome)).toList(),
+            );
+          },
+        ),
       ],
     );
   }
