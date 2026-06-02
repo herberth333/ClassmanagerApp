@@ -1,7 +1,14 @@
 import 'package:flutter/material.dart';
+import '../../services/aluno_service.dart';
+import '../../services/professor_service.dart';
+import '../../services/monitor_service.dart';
 
 class MembrosScreen extends StatelessWidget {
-  const MembrosScreen({super.key});
+  MembrosScreen({super.key});
+
+  final AlunoService _alunoService = AlunoService();
+  final ProfessorService _professorService = ProfessorService();
+  final MonitorService _monitorService = MonitorService();
 
   static const Color _blueColor = Color(0xFF0569FF);
   static const Color _grayColor = Color(0xFF595959);
@@ -13,7 +20,6 @@ class MembrosScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: _blueColor,
         elevation: 0,
-        // Ícone da casinha 
         leading: IconButton(
           icon: const Icon(Icons.home_outlined, color: Colors.white, size: 28),
           onPressed: () {
@@ -21,7 +27,7 @@ class MembrosScreen extends StatelessWidget {
           },
         ),
         title: const Text(
-          'Calculo 1',
+          'Membros',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w500,
@@ -36,23 +42,60 @@ class MembrosScreen extends StatelessWidget {
           _buildTabs(),
           const SizedBox(height: 30),
 
-          // Seção: Professores/Monitores
-          _buildSectionTitle('Professores/Monitores:'),
-          _buildListItem('Juliana Silva'),
-          _buildListItem('Caio Castro'),
-          _buildListItem('Moacir Azevedo'),
+          // Seção: Professores
+          _buildSectionTitle('Professores:'),
+          StreamBuilder<List<Professor>>(
+            stream: _professorService.getAllProfessores(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) return Text('Erro: ${snapshot.error}');
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final list = snapshot.data ?? [];
+              if (list.isEmpty) return const Text('Nenhum professor encontrado.');
+              return Column(
+                children: list.map((p) => _buildListItem(p.nome)).toList(),
+              );
+            },
+          ),
+
+          const SizedBox(height: 20),
+
+          // Seção: Monitores
+          _buildSectionTitle('Monitores:'),
+          StreamBuilder<List<Monitor>>(
+            stream: _monitorService.getAllMonitores(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) return Text('Erro: ${snapshot.error}');
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final list = snapshot.data ?? [];
+              if (list.isEmpty) return const Text('Nenhum monitor encontrado.');
+              return Column(
+                children: list.map((m) => _buildListItem(m.nome)).toList(),
+              );
+            },
+          ),
 
           const SizedBox(height: 20),
 
           // Seção: Alunos
           _buildSectionTitle('Alunos:'),
-          _buildListItem('Gabriel Touro'),
-          _buildListItem('João Jonas'),
-          _buildListItem('Daniel Lima'),
-          _buildListItem('Agripino Alves'),
-          _buildListItem('Kaique Hoonkok'),
-          _buildListItem('Paulo Jordan'),
-          _buildListItem('Angleir Reis'),
+          StreamBuilder<List<Aluno>>(
+            stream: _alunoService.getAllAlunos(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) return Text('Erro: ${snapshot.error}');
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              final list = snapshot.data ?? [];
+              if (list.isEmpty) return const Text('Nenhum aluno encontrado.');
+              return Column(
+                children: list.map((a) => _buildListItem(a.nome)).toList(),
+              );
+            },
+          ),
         ],
       ),
     );
