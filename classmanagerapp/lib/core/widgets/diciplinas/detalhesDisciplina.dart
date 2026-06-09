@@ -5,6 +5,9 @@ import 'package:classmanagerapp/services/service_membros/aluno_service.dart';
 import 'package:classmanagerapp/services/service_membros/professor_service.dart';
 import 'package:classmanagerapp/services/service_membros/monitor_service.dart';
 
+import 'package:classmanagerapp/services/mural_service.dart';
+import 'package:classmanagerapp/screens/screen_adicionar_publicacao/screen_adicionar_publicacao.dart';
+import 'package:intl/intl.dart';
 import 'topbar.dart';
 
 class DetalhesDisciplina extends StatefulWidget {
@@ -21,6 +24,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   final AlunoService _alunoService = AlunoService();
   final ProfessorService _professorService = ProfessorService();
   final MonitorService _monitorService = MonitorService();
+  final MuralService _muralService = MuralService();
 
   String get _disciplinaId =>
       widget.nomeDisciplina.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '');
@@ -94,7 +98,16 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                   ],
                 ),
                 child: InkWell(
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => AdicionarPublicacaoScreen(
+                          disciplinaId: widget.nomeDisciplina,
+                        ),
+                      ),
+                    );
+                  },
                   borderRadius: BorderRadius.circular(12),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -142,97 +155,128 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
           ),
         ),
         const SizedBox(height: 16),
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16.0),
-          decoration: BoxDecoration(
-            color: const Color(0xFFEEEEEE),
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        StreamBuilder<List<Publicacao>>(
+          stream: _muralService.getPublicacoes(widget.nomeDisciplina),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            if (snapshot.hasError) {
+              return Center(child: Text('Erro ao carregar mural: ${snapshot.error}'));
+            }
+            final publicacoes = snapshot.data ?? [];
+            if (publicacoes.isEmpty) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Text('Nenhuma publicação no mural.'),
+                ),
+              );
+            }
+            return Column(
+              children: publicacoes.map((pub) => _buildPublicacaoCard(pub)).toList(),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPublicacaoCard(Publicacao pub) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 16.0),
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: const Color(0xFFEEEEEE),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
             children: [
-              Row(
+              const Icon(
+                Icons.account_circle,
+                size: 40,
+                color: Colors.grey,
+              ),
+              const SizedBox(width: 8),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Icon(
-                    Icons.account_circle,
-                    size: 40,
-                    color: Colors.grey,
+                  Text(
+                    pub.autorNome,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
                   ),
-                  const SizedBox(width: 8),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: const [
-                      Text(
-                        'Juliana Silva',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        '12:43 - 29/03/2026',
-                        style: TextStyle(color: Colors.black54, fontSize: 12),
-                      ),
-                    ],
+                  Text(
+                    DateFormat('HH:mm - dd/MM/yyyy').format(pub.data),
+                    style: const TextStyle(color: Colors.black54, fontSize: 12),
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              const Text(
-                'SEMANA DE PESQUISA CLASSMANAGER',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
-                style: TextStyle(fontSize: 14, height: 1.4),
-              ),
-              const SizedBox(height: 16),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 8.0,
-                  vertical: 4.0,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade400),
-                ),
-                child: Row(
-                  children: [
-                    const Icon(
-                      Icons.account_circle_outlined,
-                      color: Colors.grey,
-                    ),
-                    const SizedBox(width: 8),
-                    const Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          border: InputBorder.none,
-                          isDense: true,
-                          contentPadding: EdgeInsets.symmetric(vertical: 6),
-                          hintText: 'Escreva um comentário...',
-                        ),
-                      ),
-                    ),
-                    IconButton(
-                      icon: const Icon(
-                        Icons.send_outlined,
-                        color: Colors.grey,
-                        size: 20,
-                      ),
-                      onPressed: () {},
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
-                  ],
-                ),
-              ),
             ],
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+          Text(
+            pub.titulo.toUpperCase(),
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
+          ),
+          const SizedBox(height: 8),
+          Text(
+            pub.conteudo,
+            style: const TextStyle(fontSize: 14, height: 1.4),
+          ),
+          const SizedBox(height: 16),
+          _buildCampoComentario(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCampoComentario() {
+    return Container(
+      padding: const EdgeInsets.symmetric(
+        horizontal: 8.0,
+        vertical: 4.0,
+      ),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade400),
+      ),
+      child: Row(
+        children: [
+          const Icon(
+            Icons.account_circle_outlined,
+            color: Colors.grey,
+          ),
+          const SizedBox(width: 8),
+          const Expanded(
+            child: TextField(
+              decoration: InputDecoration(
+                border: InputBorder.none,
+                isDense: true,
+                contentPadding: EdgeInsets.symmetric(vertical: 6),
+                hintText: 'Escreva um comentário...',
+              ),
+            ),
+          ),
+          IconButton(
+            icon: const Icon(
+              Icons.send_outlined,
+              color: Colors.grey,
+              size: 20,
+            ),
+            onPressed: () {},
+            padding: EdgeInsets.zero,
+            constraints: const BoxConstraints(),
+          ),
+        ],
+      ),
     );
   }
 

@@ -28,16 +28,8 @@ class DiciplinasScreen extends StatelessWidget {
         elevation: 0,
         centerTitle: true,
         leading: IconButton(
-          icon: const Icon(Icons.logout, color: Colors.white), 
-          onPressed: () async {
-            await authService.fazerLogout();
-            if (context.mounted) {
-              Navigator.pushAndRemoveUntil(
-                context,
-                MaterialPageRoute(builder: (context) => const LoginScreen()),
-                (route) => false,
-              );
-            }
+          icon: const Icon(Icons.account_circle_outlined, color: Colors.white, size: 28), 
+          onPressed: () {
           },
         ),
         title: const Text(
@@ -50,8 +42,16 @@ class DiciplinasScreen extends StatelessWidget {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.account_circle_outlined, color: Colors.white, size: 28), 
-            onPressed: () {
+            icon: const Icon(Icons.logout, color: Colors.white), 
+            onPressed: () async {
+              await authService.fazerLogout();
+              if (context.mounted) {
+                Navigator.pushAndRemoveUntil(
+                  context,
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  (route) => false,
+                );
+              }
             },
           ),
           const SizedBox(width: 8),
