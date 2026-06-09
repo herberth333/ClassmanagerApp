@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../services/configuracoes_service.dart';
+
 class ConfiguracoesScreen extends StatefulWidget {
   const ConfiguracoesScreen({super.key});
 
@@ -10,7 +12,7 @@ class ConfiguracoesScreen extends StatefulWidget {
 class _ConfiguracoesScreenState extends State<ConfiguracoesScreen> {
   static const Color _blueColor = Color(0xFF0569FF);
 
-  bool _notificacoesAtivas = false;
+  final ConfiguracoesService _service = ConfiguracoesService();
 
   @override
   Widget build(BuildContext context) {
@@ -40,47 +42,64 @@ class _ConfiguracoesScreenState extends State<ConfiguracoesScreen> {
           const SizedBox(width: 8),
         ],
       ),
-      body: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    'Notificacoes',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Colors.black,
-                      fontWeight: FontWeight.w700,
-                    ),
+      body: StreamBuilder<ConfiguracoesUsuario>(
+        stream: _service.assistirConfiguracoes(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Erro ao carregar configuracoes: ${snapshot.error}'),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final configuracoes =
+              snapshot.data ??
+              const ConfiguracoesUsuario(notificacoesAtivas: false);
+
+          return Padding(
+            padding: const EdgeInsets.fromLTRB(16, 24, 16, 16),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        'Notificacoes',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 4),
+                      Text(
+                        'Permitir que o aplicativo envie notificacoes',
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.black,
+                          height: 1.25,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Permitir que o aplicativo envie notificacoes',
-                    style: TextStyle(
-                      fontSize: 16,
-                      color: Colors.black,
-                      height: 1.25,
-                    ),
-                  ),
-                ],
-              ),
+                ),
+                Switch(
+                  value: configuracoes.notificacoesAtivas,
+                  activeThumbColor: _blueColor,
+                  onChanged: (value) {
+                    _service.atualizarNotificacoes(value);
+                  },
+                ),
+              ],
             ),
-            Switch(
-              value: _notificacoesAtivas,
-              activeThumbColor: _blueColor,
-              onChanged: (value) {
-                setState(() {
-                  _notificacoesAtivas = value;
-                });
-              },
-            ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
