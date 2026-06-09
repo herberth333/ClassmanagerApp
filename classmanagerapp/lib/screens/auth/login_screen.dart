@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/services/auth/auth_service.dart';
 import 'package:classmanagerapp/screens/home/home_sreen.dart';
+import 'package:classmanagerapp/screens/auth/sign_up_screen.dart';
+import 'package:classmanagerapp/screens/auth/forgot_password_page.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,24 +23,51 @@ class _LoginScreenState extends State<LoginScreen> {
   final Color _primaryBlue = const Color(0xFF0569FF);
 
   void _entrar() async {
+    String email = _emailController.text.trim();
+    String senha = _senhaController.text.trim();
+
+    // 1. Verifica se está vazio
+    if (email.isEmpty || senha.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Por favor, preencha e-mail e senha.')),
+      );
+      return;
+    }
+
+    // 2. A SUA IDEIA: Trava imediata de domínio antes de ir pro Firebase!
+    if (!email.endsWith('@souunit.com.br')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Acesso negado. Utilize seu e-mail institucional (@souunit.com.br).',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return; // O "return" faz a função parar aqui e não gastar internet chamando o Firebase
+    }
+
     setState(() {
       _isLoading = true;
     });
 
-    String email = _emailController.text;
-    String senha = _senhaController.text;
-
-    bool sucesso = await _authService.fazerLogin(email, senha);
+    String? erro = await _authService.fazerLogin(email, senha);
 
     setState(() {
       _isLoading = false;
     });
 
-    if (sucesso) {
+    if (erro == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Login realizado com sucesso!')),
+        const SnackBar(
+          content: Text(
+            'Login realizado com sucesso!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
       );
-
       Future.delayed(const Duration(milliseconds: 500), () {
         if (mounted) {
           Navigator.pushReplacement(
@@ -49,7 +78,52 @@ class _LoginScreenState extends State<LoginScreen> {
       });
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('E-mail ou senha incorretos.')),
+        SnackBar(
+          content: Text(erro, style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  void _entrarComGoogle() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    // Chama o método que criamos lá no AuthService
+    String? erro = await _authService.loginComGoogle();
+
+    setState(() {
+      _isLoading = false;
+    });
+
+    if (erro == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Login com Google realizado com sucesso!',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.green,
+        ),
+      );
+
+      Future.delayed(const Duration(milliseconds: 500), () {
+        if (mounted) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+      });
+    } else if (erro != 'Login cancelado.') {
+      // Exibe o erro vermelho (incluindo a trava de domínio do Google)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(erro, style: const TextStyle(color: Colors.white)),
+          backgroundColor: Colors.red,
+        ),
       );
     }
   }
@@ -75,12 +149,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w800,
-                  color: Color(0xFF1E212B), 
+                  color: Color(0xFF1E212B),
                 ),
               ),
               const SizedBox(height: 40),
-
-              // Rótulo E-mail
+  
               const Text(
                 'E-mail',
                 style: TextStyle(
@@ -91,7 +164,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Campo E-mail
               TextField(
                 controller: _emailController,
                 keyboardType: TextInputType.emailAddress,
@@ -118,7 +190,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
 
-              // Rótulo Senha
               const Text(
                 'Senha',
                 style: TextStyle(
@@ -129,7 +200,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Campo Senha
               TextField(
                 controller: _senhaController,
                 obscureText: !_isPasswordVisible,
@@ -169,7 +239,6 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 24),
 
-              // Botão Acessar
               SizedBox(
                 height: 55,
                 child: ElevatedButton(
@@ -196,12 +265,16 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 8),
 
-              // Link "Esqueceu a senha?"
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
                   onPressed: () {
-                    // Lógica para recuperação de senha
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const ForgotPasswordPage(),
+                      ),
+                    );
                   },
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
@@ -213,17 +286,44 @@ class _LoginScreenState extends State<LoginScreen> {
                     style: TextStyle(
                       color: _primaryBlue,
                       fontWeight: FontWeight.w600,
-                      decoration:
-                          TextDecoration.underline, // Sublinhado como na imagem
+                      decoration: TextDecoration.underline,
                       decorationColor: _primaryBlue,
                     ),
                   ),
                 ),
               ),
 
-              const SizedBox(height: 48),
+              // --- INÍCIO DO BOTÃO DO GOOGLE ---
+              const SizedBox(height: 24),
 
-              // Seção "Primeira vez aqui?"
+              OutlinedButton.icon(
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  side: const BorderSide(color: Color(0xFFE0E0E0)),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30.0),
+                  ),
+                ),
+                onPressed: _isLoading ? null : _entrarComGoogle,
+                icon: const Icon(
+                  Icons.g_mobiledata,
+                  size: 40,
+                  color: Colors.blue,
+                ),
+                
+                label: const Text(
+                  'Entrar com Google',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Color(0xFF333333),
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+
+              const SizedBox(height: 32),
+
+              // --- FIM DO BOTÃO DO GOOGLE ---
               Center(
                 child: Column(
                   children: [
@@ -234,7 +334,12 @@ class _LoginScreenState extends State<LoginScreen> {
                     const SizedBox(height: 4),
                     TextButton(
                       onPressed: () {
-                        // Lógica para cadastro
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => SignUpScreen(),
+                          ),
+                        );
                       },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
@@ -246,8 +351,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         style: TextStyle(
                           color: _primaryBlue,
                           fontWeight: FontWeight.w600,
-                          decoration: TextDecoration
-                              .underline, // Sublinhado como na imagem
+                          decoration: TextDecoration.underline,
                           decorationColor: _primaryBlue,
                         ),
                       ),
