@@ -25,7 +25,7 @@ class AtividadeAluno {
 
     return AtividadeAluno(
       id: doc.id,
-      disciplina: data['disciplina'] ?? 'Calculo 1',
+      disciplina: data['disciplina'] ?? data['disciplinaId'] ?? 'Calculo 1',
       turma: data['turma'] ?? 'Sem turma',
       titulo: data['titulo'] ?? 'Sem titulo',
       prazo: data['prazo'] ?? 'Sem prazo',

@@ -6,8 +6,13 @@ import '../../services/atividade_aluno_service.dart';
 
 class AtividadeAlunoScreen extends StatelessWidget {
   final String nomeDisciplina;
+  final String disciplinaId;
 
-  const AtividadeAlunoScreen({super.key, this.nomeDisciplina = 'Calculo 1'});
+  const AtividadeAlunoScreen({
+    super.key,
+    this.nomeDisciplina = 'Calculo 1',
+    this.disciplinaId = 'calculo1',
+  });
 
   static const Color _blueColor = Color(0xFF0569FF);
 
@@ -34,7 +39,10 @@ class AtividadeAlunoScreen extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
-        child: AtividadeAlunoContent(nomeDisciplina: nomeDisciplina),
+        child: AtividadeAlunoContent(
+          nomeDisciplina: nomeDisciplina,
+          disciplinaId: disciplinaId,
+        ),
       ),
     );
   }
@@ -42,8 +50,13 @@ class AtividadeAlunoScreen extends StatelessWidget {
 
 class AtividadeAlunoContent extends StatefulWidget {
   final String nomeDisciplina;
+  final String disciplinaId;
 
-  const AtividadeAlunoContent({super.key, required this.nomeDisciplina});
+  const AtividadeAlunoContent({
+    super.key,
+    required this.nomeDisciplina,
+    this.disciplinaId = 'calculo1',
+  });
 
   @override
   State<AtividadeAlunoContent> createState() => _AtividadeAlunoContentState();
@@ -51,12 +64,6 @@ class AtividadeAlunoContent extends StatefulWidget {
 
 class _AtividadeAlunoContentState extends State<AtividadeAlunoContent> {
   final AtividadeAlunoService _service = AtividadeAlunoService();
-
-  @override
-  void initState() {
-    super.initState();
-    _service.garantirAtividadeInicial(widget.nomeDisciplina);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +83,7 @@ class _AtividadeAlunoContentState extends State<AtividadeAlunoContent> {
           ),
         ),
         StreamBuilder<List<AtividadeAluno>>(
-          stream: _service.assistirAtividades(widget.nomeDisciplina),
+          stream: _service.assistirAtividades(widget.disciplinaId),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return Text('Erro ao carregar atividades: ${snapshot.error}');
