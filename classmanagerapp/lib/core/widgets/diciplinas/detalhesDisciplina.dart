@@ -22,6 +22,9 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
   final ProfessorService _professorService = ProfessorService();
   final MonitorService _monitorService = MonitorService();
 
+  String get _disciplinaId =>
+      widget.nomeDisciplina.toLowerCase().replaceAll(RegExp(r'[^a-z0-9]+'), '');
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -256,6 +259,7 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
                   MaterialPageRoute(
                     builder: (context) => AtividadeProfessorScreen(
                       nomeDisciplina: widget.nomeDisciplina,
+                      disciplinaId: _disciplinaId,
                     ),
                   ),
                 );
@@ -277,7 +281,10 @@ class _DetalhesDisciplinaState extends State<DetalhesDisciplina> {
           ),
         ),
         const SizedBox(height: 10),
-        AtividadeAlunoContent(nomeDisciplina: widget.nomeDisciplina),
+        AtividadeAlunoContent(
+          nomeDisciplina: widget.nomeDisciplina,
+          disciplinaId: _disciplinaId,
+        ),
       ],
     );
   }

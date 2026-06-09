@@ -80,53 +80,25 @@ class EntregaAtividadeAluno {
 }
 
 class AtividadeAlunoService {
-  AtividadeAlunoService({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-  }) : _db = firestore ?? FirebaseFirestore.instance,
-       _auth = auth ?? FirebaseAuth.instance;
+  AtividadeAlunoService({FirebaseFirestore? firestore, FirebaseAuth? auth})
+    : _db = firestore ?? FirebaseFirestore.instance,
+      _auth = auth ?? FirebaseAuth.instance;
 
   final FirebaseFirestore _db;
   final FirebaseAuth _auth;
 
   CollectionReference<Map<String, dynamic>> get _atividadesRef =>
-      _db.collection('AtividadeAluno');
+      _db.collection('AtividadeProfessor');
 
   CollectionReference<Map<String, dynamic>> get _entregasRef =>
       _db.collection('EntregaAtividadeAluno');
 
   String get _alunoId => _auth.currentUser?.uid ?? 'sem-login';
 
-  Future<void> garantirAtividadeInicial(String disciplina) async {
-    final snapshot = await _atividadesRef
-        .where('disciplina', isEqualTo: disciplina)
-        .where('tipo', isEqualTo: 'aluno')
-        .limit(1)
-        .get();
-
-    if (snapshot.docs.isNotEmpty) {
-      return;
-    }
-
-    await _atividadesRef.doc('aluno_${_normalizarId(disciplina)}_inicial').set({
-      'disciplina': disciplina,
-      'turma': 'Class 0001',
-      'titulo': 'Atividade do aluno',
-      'prazo': 'jan. 01, 23:00',
-      'descricao': 'Atividade inicial para testar o fluxo de entrega do aluno.',
-      'orientacoes': [
-        'Adicione um trabalho para criar a entrega.',
-        'Marque como concluido para atualizar o status.',
-      ],
-      'tipo': 'aluno',
-      'criadoEm': FieldValue.serverTimestamp(),
-    });
-  }
-
-  Stream<List<AtividadeAluno>> assistirAtividades(String disciplina) {
+  Stream<List<AtividadeAluno>> assistirAtividades(String disciplinaId) {
     return _atividadesRef
-        .where('disciplina', isEqualTo: disciplina)
-        .where('tipo', isEqualTo: 'aluno')
+        .where('disciplinaId', isEqualTo: disciplinaId)
+        .where('tipo', isEqualTo: 'professor')
         .snapshots()
         .map((snapshot) {
           final atividades = snapshot.docs
@@ -158,18 +130,20 @@ class AtividadeAlunoService {
       tamanho: tamanho,
     );
 
-    return _entregaDoc(atividadeId).set({
-      'atividadeId': atividadeId,
-      'alunoId': _alunoId,
-      'trabalhos': FieldValue.arrayUnion([trabalho.toFirestore()]),
-      'concluida': false,
-      'atualizadoEm': FieldValue.serverTimestamp(),
-    }, SetOptions(merge: true)).timeout(
-      const Duration(seconds: 10),
-      onTimeout: () => throw Exception(
-        'Arquivo enviado, mas a entrega nao foi salva no Firestore.',
-      ),
-    );
+    return _entregaDoc(atividadeId)
+        .set({
+          'atividadeId': atividadeId,
+          'alunoId': _alunoId,
+          'trabalhos': FieldValue.arrayUnion([trabalho.toFirestore()]),
+          'concluida': false,
+          'atualizadoEm': FieldValue.serverTimestamp(),
+        }, SetOptions(merge: true))
+        .timeout(
+          const Duration(seconds: 10),
+          onTimeout: () => throw Exception(
+            'Arquivo enviado, mas a entrega nao foi salva no Firestore.',
+          ),
+        );
   }
 
   Future<void> alternarConclusao({
@@ -187,12 +161,4 @@ class AtividadeAlunoService {
   DocumentReference<Map<String, dynamic>> _entregaDoc(String atividadeId) {
     return _entregasRef.doc('${_alunoId}_$atividadeId');
   }
-
-  String _normalizarId(String valor) {
-    return valor
-        .toLowerCase()
-        .replaceAll(RegExp(r'[^a-z0-9]+'), '-')
-        .replaceAll(RegExp(r'^-+|-+$'), '');
-  }
-
 }
