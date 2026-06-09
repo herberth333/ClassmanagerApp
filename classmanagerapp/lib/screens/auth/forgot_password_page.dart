@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-// TODO: Lembre-se de ajustar este import de acordo com o caminho real do seu projeto
-import 'verify_code_page.dart'; 
+import '../../services/auth/auth_service.dart'; 
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -11,6 +10,8 @@ class ForgotPasswordPage extends StatefulWidget {
 
 class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
+  // Instância do seu serviço de autenticação
+  final AuthService _authService = AuthService(); 
   bool _isLoading = false;
 
   @override
@@ -19,10 +20,24 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     super.dispose();
   }
 
-  void _resetarSenha() {
-    if (_emailController.text.isEmpty) {
+  // 2. Método _resetarSenha atualizado para se comunicar com o Firebase
+  Future<void> _resetarSenha() async {
+    final email = _emailController.text.trim();
+
+    // Validação de campo vazio
+    if (email.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Por favor, insira um e-mail válido.')),
+        const SnackBar(content: Text('Por favor, insira seu e-mail.')),
+      );
+      return;
+    }
+
+    // Validação do domínio institucional para manter o padrão do app
+    if (!email.endsWith('@souunit.com.br')) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Por favor, insira seu e-mail institucional (@souunit.com.br).'),
+        ),
       );
       return;
     }
@@ -31,27 +46,35 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       _isLoading = true;
     });
 
-    // Simulando tempo de requisição com a API
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-        
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('E-mail de recuperação enviado com sucesso!')),
-        );
-        
-        // --- ALTERAÇÃO AQUI ---
-        // Direcionando o usuário para a tela de Verificação de Código
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => const VerifyCodePage(),
-          ),
-        );
-      }
+    // Chamando a função do Firebase mapeada no seu AuthService
+    String? erro = await _authService.recuperarSenha(email);
+
+    if (!mounted) return;
+
+    setState(() {
+      _isLoading = false;
     });
+
+    if (erro == null) {
+      // Sucesso!
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Link de recuperação enviado com sucesso! Verifique sua caixa de entrada.'),
+          backgroundColor: Colors.green,
+        ),
+      );
+      
+      // Retorna o usuário para a tela de login, já que o processo continuará no e-mail dele
+      Navigator.pop(context);
+    } else {
+      // Caso ocorra algum erro (ex: e-mail não cadastrado)
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(erro),
+          backgroundColor: Colors.redAccent,
+        ),
+      );
+    }
   }
 
   @override
