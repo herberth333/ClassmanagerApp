@@ -55,6 +55,14 @@ class _AdicionarAtividadeScreenState extends State<AdicionarAtividadeScreen> {
       return;
     }
 
+    final disciplinaId = widget.disciplinaId.trim();
+    if (_pessoaId.isEmpty || disciplinaId.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Usuario nao autenticado.')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
 
     try {
@@ -69,7 +77,7 @@ class _AdicionarAtividadeScreenState extends State<AdicionarAtividadeScreen> {
 
       await _atividadeService.criarAtividade(
         _pessoaId,
-        widget.disciplinaId,
+        disciplinaId,
         atividade,
       );
 
