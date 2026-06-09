@@ -1,0 +1,4 @@
+{
+  "dart.flutterRunAdditionalArgs": ["-d", "web-server"],
+  "dart.flutterDevice": "web-server"
+}

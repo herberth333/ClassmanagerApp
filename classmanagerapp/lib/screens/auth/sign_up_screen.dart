@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '/services/auth/auth_service.dart'; 
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({Key? key}) : super(key: key);
@@ -13,6 +14,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _senhaController = TextEditingController();
   final TextEditingController _confirmeSenhaController = TextEditingController();
+
+  // 👈 Nova variável para armazenar o tipo de usuário selecionado
+  String? _tipoUsuarioSelecionado; 
 
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
@@ -36,7 +40,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
       body: SafeArea(
         child: SingleChildScrollView(
           child: Padding(
-            // Ajustei o padding vertical para compensar o SafeArea
             padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 24.0),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -124,6 +127,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 16),
 
+                // 👈 NOVO CAMPO: SELEÇÃO DE TIPO DE USUÁRIO (ALUNO / PROFESSOR)
+                const Text(
+                  'Tipo de Conta:',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF333333),
+                  ),
+                ),
+                const SizedBox(height: 4),
+                DropdownButtonFormField<String>(
+                  value: _tipoUsuarioSelecionado,
+                  hint: const Text('Selecione se você é Aluno ou Professor', style: TextStyle(color: Colors.grey, fontSize: 14)),
+                  decoration: _getInputDecoration(hintText: ''),
+                  icon: const Icon(Icons.arrow_drop_down, color: Colors.grey),
+                  items: const [
+                    DropdownMenuItem(
+                      value: 'aluno',
+                      child: Text('Aluno', style: TextStyle(fontSize: 15)),
+                    ),
+                    DropdownMenuItem(
+                      value: 'professor',
+                      child: Text('Professor', style: TextStyle(fontSize: 15)),
+                    ),
+                  ],
+                  onChanged: (String? novoValor) {
+                    setState(() {
+                      _tipoUsuarioSelecionado = novoValor;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
                 const Text(
                   'Digite uma senha:',
                   style: TextStyle(
@@ -189,6 +225,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 ),
                 const SizedBox(height: 48),
 
+                // 🚀 BOTÃO UNIFICADO COM LÓGICA DO FIREBASE ATUALIZADA
                 SizedBox(
                   height: 55,
                   child: ElevatedButton(
@@ -198,7 +235,87 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         borderRadius: BorderRadius.circular(30.0),
                       ),
                     ),
-                    onPressed: () {},
+                    onPressed: () async {
+                      // 1. Validação básica dos campos vazios (Adicionado o check do Dropdown)
+                      if (_nomeController.text.trim().isEmpty ||
+                          _matriculaController.text.trim().isEmpty ||
+                          _emailController.text.trim().isEmpty ||
+                          _tipoUsuarioSelecionado == null || // 👈 Impede envio sem selecionar o cargo
+                          _senhaController.text.isEmpty) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Por favor, preencha todos os campos!'),
+                            backgroundColor: Colors.orange,
+                          ),
+                        );
+                        return;
+                      }
+
+                      // 2. Trava de segurança para o e-mail institucional
+                      if (!_emailController.text.trim().endsWith('@souunit.com.br')) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Apenas e-mails com domínio @souunit.com.br são permitidos!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      // 3. Validação de senhas idênticas
+                      if (_senhaController.text != _confirmeSenhaController.text) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('As senhas não coincidem!'),
+                            backgroundColor: Colors.red,
+                          ),
+                        );
+                        return;
+                      }
+
+                      // 4. Se passou, exibe o loading na tela
+                      showDialog(
+                        context: context,
+                        barrierDismissible: false,
+                        builder: (context) => const Center(child: CircularProgressIndicator()),
+                      );
+
+                      try {
+                        final authService = AuthService(); 
+                        
+                        // 🚀 ATUALIZAÇÃO DA CHAMADA: Agora enviamos dinamicamente se é aluno ou professor
+                        String? erro = await authService.cadastrarComEmailSenha(
+                          email: _emailController.text.trim(),
+                          senha: _senhaController.text,
+                          nome: _nomeController.text.trim(),
+                          matricula: _matriculaController.text.trim(),
+                          tipoUsuario: _tipoUsuarioSelecionado!, // 👈 Parâmetro injetado aqui
+                        );
+
+                        if (!mounted) return;
+                        Navigator.pop(context); // Remove o loading
+
+                        if (erro == null) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Cadastro realizado com sucesso!'),
+                              backgroundColor: Colors.green,
+                            ),
+                          );
+                          Navigator.pop(context); // Volta para a tela anterior (Login)
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(erro), backgroundColor: Colors.red),
+                          );
+                        }
+                      } catch (e) {
+                        if (!mounted) return;
+                        Navigator.pop(context); // Remove o loading
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Erro inesperado: $e'), backgroundColor: Colors.red),
+                        );
+                      }
+                    },
                     child: const Text(
                       'Solicitar Acesso',
                       style: TextStyle(

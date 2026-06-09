@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+// TODO: Lembre-se de ajustar este import de acordo com o caminho real do seu projeto
+import 'verify_code_page.dart'; 
 
 class ForgotPasswordPage extends StatefulWidget {
   const ForgotPasswordPage({super.key});
@@ -39,7 +41,15 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('E-mail de recuperação enviado com sucesso!')),
         );
-        Navigator.pop(context);
+        
+        // --- ALTERAÇÃO AQUI ---
+        // Direcionando o usuário para a tela de Verificação de Código
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const VerifyCodePage(),
+          ),
+        );
       }
     });
   }
@@ -47,13 +57,10 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Fundo branco ocupando toda a tela
       backgroundColor: Colors.white,
       body: SafeArea(
-        // Adicionado para permitir rolagem e evitar overflow com o teclado aberto
         child: SingleChildScrollView(
           child: Padding(
-            // Padding ajustado para dar respiro nas laterais em qualquer tamanho de tela
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
