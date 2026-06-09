@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:classmanagerapp/screens/screen_atividade_aluno/screen_atividade_aluno.dart';
 import 'package:classmanagerapp/screens/screen_atividade_professor/screen_atividade_professor.dart';
-import 'package:classmanagerapp/services/aluno_service.dart';
-import 'package:classmanagerapp/services/professor_service.dart';
-import 'package:classmanagerapp/services/monitor_service.dart';
+import 'package:classmanagerapp/services/service_membros/aluno_service.dart';
+import 'package:classmanagerapp/services/service_membros/professor_service.dart';
+import 'package:classmanagerapp/services/service_membros/monitor_service.dart';
 
 import 'topbar.dart';
 

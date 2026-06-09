@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../../services/aluno_service.dart';
-import '../../services/professor_service.dart';
-import '../../services/monitor_service.dart';
+import '../../services/service_membros/aluno_service.dart';
+import '../../services/service_membros/professor_service.dart';
+import '../../services/service_membros/monitor_service.dart';
 
 class MembrosScreen extends StatelessWidget {
   MembrosScreen({super.key});
