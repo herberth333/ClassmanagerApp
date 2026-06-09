@@ -1,6 +1,8 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
 import '../screen_atividade_aluno/atividade_aluno_model.dart';
+import '../../services/atividade_aluno_service.dart';
 
 class EntregaAtividadeAlunoScreen extends StatefulWidget {
   final String nomeDisciplina;
@@ -22,19 +24,76 @@ class _EntregaAtividadeAlunoScreenState
   static const Color _blueColor = Color(0xFF0569FF);
   static const Color _lightCyan = Color(0xFFE2FCFF);
 
-  bool _concluida = false;
-  final List<String> _trabalhos = [];
+  final AtividadeAlunoService _service = AtividadeAlunoService();
+  bool _anexando = false;
+  bool _salvandoConclusao = false;
 
-  void _adicionarTrabalho() {
-    setState(() {
-      _trabalhos.add('Trabalho ${_trabalhos.length + 1}.pdf');
-    });
+  Future<void> _adicionarTrabalho() async {
+    final resultado = await FilePicker.pickFiles(
+      allowMultiple: false,
+      withData: true,
+    );
+
+    final arquivo = resultado?.files.single;
+
+    if (arquivo == null) {
+      return;
+    }
+
+    setState(() => _anexando = true);
+
+    try {
+      await _service.anexarTrabalho(
+        atividadeId: widget.atividade.id,
+        nomeArquivo: arquivo.name,
+        tamanho: arquivo.size,
+      );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Erro ao anexar arquivo: $error')));
+    } finally {
+      if (mounted) {
+        setState(() => _anexando = false);
+      }
+    }
   }
 
-  void _marcarComoConcluido() {
-    setState(() {
-      _concluida = !_concluida;
-    });
+  void _abrirArquivo(TrabalhoAtividadeAluno trabalho) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Arquivo registrado no Firestore. Para abrir o arquivo real, precisa ativar Firebase Storage.',
+        ),
+      ),
+    );
+  }
+
+  Future<void> _marcarComoConcluido(bool concluidaAtual) async {
+    setState(() => _salvandoConclusao = true);
+
+    try {
+      await _service.alternarConclusao(
+        atividadeId: widget.atividade.id,
+        concluida: !concluidaAtual,
+      );
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao atualizar conclusao: $error')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _salvandoConclusao = false);
+      }
+    }
   }
 
   @override
@@ -71,29 +130,37 @@ class _EntregaAtividadeAlunoScreenState
         ),
         centerTitle: true,
       ),
-      body: Column(
-        children: [
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(),
-                  const SizedBox(height: 26),
-                  _buildPrazo(),
-                  const SizedBox(height: 16),
-                  _buildDescricao(),
-                  const SizedBox(height: 22),
-                  _buildListaOrientacoes(),
-                  const SizedBox(height: 24),
-                  if (_concluida) _buildConcluidoAviso(),
-                ],
+      body: StreamBuilder<EntregaAtividadeAluno>(
+        stream: _service.assistirEntrega(widget.atividade.id),
+        builder: (context, snapshot) {
+          final entrega =
+              snapshot.data ?? EntregaAtividadeAluno.vazia(widget.atividade.id);
+
+          return Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.fromLTRB(16, 14, 16, 18),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildHeader(),
+                      const SizedBox(height: 26),
+                      _buildPrazo(),
+                      const SizedBox(height: 16),
+                      _buildDescricao(),
+                      const SizedBox(height: 22),
+                      _buildListaOrientacoes(),
+                      const SizedBox(height: 24),
+                      if (entrega.concluida) _buildConcluidoAviso(),
+                    ],
+                  ),
+                ),
               ),
-            ),
-          ),
-          _buildAreaTrabalhos(),
-        ],
+              _buildAreaTrabalhos(entrega),
+            ],
+          );
+        },
       ),
     );
   }
@@ -159,7 +226,9 @@ class _EntregaAtividadeAlunoScreenState
   }
 
   Widget _buildListaOrientacoes() {
-    const itens = ['LOREM', 'LOREM', 'LOREM', 'LOREM'];
+    final itens = widget.atividade.orientacoes.isEmpty
+        ? ['Sem orientacoes cadastradas.']
+        : widget.atividade.orientacoes;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -197,7 +266,7 @@ class _EntregaAtividadeAlunoScreenState
     );
   }
 
-  Widget _buildAreaTrabalhos() {
+  Widget _buildAreaTrabalhos(EntregaAtividadeAluno entrega) {
     return Container(
       width: double.infinity,
       color: _lightCyan,
@@ -217,24 +286,12 @@ class _EntregaAtividadeAlunoScreenState
                 fontFamily: 'serif',
               ),
             ),
-            if (_trabalhos.isNotEmpty) ...[
+            if (entrega.trabalhos.isNotEmpty) ...[
               const SizedBox(height: 8),
               Wrap(
                 spacing: 8,
                 runSpacing: 8,
-                children: _trabalhos
-                    .map(
-                      (trabalho) => Chip(
-                        label: Text(trabalho),
-                        avatar: const Icon(
-                          Icons.description_outlined,
-                          size: 18,
-                        ),
-                        backgroundColor: Colors.white,
-                        visualDensity: VisualDensity.compact,
-                      ),
-                    )
-                    .toList(),
+                children: entrega.trabalhos.map(_buildTrabalhoChip).toList(),
               ),
             ],
             const SizedBox(height: 22),
@@ -242,19 +299,25 @@ class _EntregaAtividadeAlunoScreenState
               children: [
                 Expanded(
                   child: _buildAcaoButton(
-                    label: 'Adicionar Trabalho',
+                    label: _anexando ? 'Anexando...' : 'Adicionar Trabalho',
                     icon: Icons.add,
                     color: const Color(0xFF666666),
-                    onPressed: _adicionarTrabalho,
+                    onPressed: _anexando ? null : _adicionarTrabalho,
                   ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: _buildAcaoButton(
-                    label: _concluida ? 'Concluido' : 'Marcar como concluido',
-                    icon: _concluida ? Icons.check : null,
+                    label: _salvandoConclusao
+                        ? 'Salvando...'
+                        : entrega.concluida
+                        ? 'Concluido'
+                        : 'Marcar como concluido',
+                    icon: entrega.concluida ? Icons.check : null,
                     color: _blueColor,
-                    onPressed: _marcarComoConcluido,
+                    onPressed: _salvandoConclusao
+                        ? null
+                        : () => _marcarComoConcluido(entrega.concluida),
                   ),
                 ),
               ],
@@ -265,10 +328,20 @@ class _EntregaAtividadeAlunoScreenState
     );
   }
 
+  Widget _buildTrabalhoChip(TrabalhoAtividadeAluno trabalho) {
+    return ActionChip(
+      label: Text(trabalho.nome),
+      avatar: const Icon(Icons.description_outlined, size: 18),
+      backgroundColor: Colors.white,
+      visualDensity: VisualDensity.compact,
+      onPressed: () => _abrirArquivo(trabalho),
+    );
+  }
+
   Widget _buildAcaoButton({
     required String label,
     required Color color,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
     IconData? icon,
   }) {
     return SizedBox(
