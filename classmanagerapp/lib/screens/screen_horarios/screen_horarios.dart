@@ -1,42 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../services/horario_service.dart';
+import 'horario_model.dart';
 
-class HorariosScreen extends StatelessWidget {
-  const HorariosScreen({super.key});
+class HorariosScreen extends StatefulWidget {
+  final String disciplinaId;
 
+  const HorariosScreen({
+    super.key,
+    this.disciplinaId = 'calculo1',
+  });
+
+  @override
+  State<HorariosScreen> createState() => _HorariosScreenState();
+}
+
+class _HorariosScreenState extends State<HorariosScreen> {
   static const Color _blueColor = Color(0xFF0569FF);
+  final HorarioService _horarioService = HorarioService();
+  late String _pessoaId;
 
-  static const List<_HorarioItem> _horarios = [
-    _HorarioItem(
-      dia: 'Segunda',
-      disciplina: 'Calculo 1',
-      sala: 'Sala 22',
-      horario: '18:45 as 22:15',
-    ),
-    _HorarioItem(
-      dia: 'Terca',
-      disciplina: 'Redes',
-      sala: 'Lab 03',
-      horario: '18:45 as 20:25',
-    ),
-    _HorarioItem(
-      dia: 'Quarta',
-      disciplina: 'Estatistica',
-      sala: 'Sala 18',
-      horario: '20:35 as 22:15',
-    ),
-    _HorarioItem(
-      dia: 'Quinta',
-      disciplina: 'Programacao de Redes',
-      sala: 'Lab 02',
-      horario: '18:45 as 22:15',
-    ),
-    _HorarioItem(
-      dia: 'Sexta',
-      disciplina: 'Direito Penal',
-      sala: 'Sala 12',
-      horario: '19:00 as 21:30',
-    ),
-  ];
+  @override
+  void initState() {
+    super.initState();
+    _pessoaId = FirebaseAuth.instance.currentUser?.uid ?? '';
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -82,12 +70,35 @@ class HorariosScreen extends StatelessWidget {
           ),
         ],
       ),
-      body: ListView.separated(
-        padding: const EdgeInsets.all(20.0),
-        itemCount: _horarios.length,
-        separatorBuilder: (context, index) => const SizedBox(height: 12),
-        itemBuilder: (context, index) {
-          return _HorarioCard(item: _horarios[index]);
+      body: StreamBuilder<List<Horario>>(
+        stream: _horarioService.getHorariosDisciplina(_pessoaId, widget.disciplinaId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          if (snapshot.hasError) {
+            return Center(
+              child: Text('Erro ao carregar: ${snapshot.error}'),
+            );
+          }
+
+          final horarios = snapshot.data ?? [];
+
+          if (horarios.isEmpty) {
+            return const Center(
+              child: Text('Nenhum horário cadastrado'),
+            );
+          }
+
+          return ListView.separated(
+            padding: const EdgeInsets.all(20.0),
+            itemCount: horarios.length,
+            separatorBuilder: (context, index) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              return _HorarioCard(horario: horarios[index]);
+            },
+          );
         },
       ),
     );
@@ -95,9 +106,9 @@ class HorariosScreen extends StatelessWidget {
 }
 
 class _HorarioCard extends StatelessWidget {
-  final _HorarioItem item;
+  final Horario horario;
 
-  const _HorarioCard({required this.item});
+  const _HorarioCard({required this.horario});
 
   @override
   Widget build(BuildContext context) {
@@ -136,7 +147,7 @@ class _HorarioCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  item.dia,
+                  horario.dia,
                   style: const TextStyle(
                     color: Colors.black,
                     fontSize: 16,
@@ -145,7 +156,7 @@ class _HorarioCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  item.disciplina,
+                  horario.disciplina,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
@@ -156,7 +167,7 @@ class _HorarioCard extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '${item.sala}  -  ${item.horario}',
+                  '${horario.sala}  -  ${horario.horario}',
                   style: const TextStyle(
                     color: Colors.black54,
                     fontSize: 12,

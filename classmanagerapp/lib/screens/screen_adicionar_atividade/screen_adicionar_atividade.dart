@@ -1,11 +1,19 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../services/atividade_service.dart';
 import '../screen_atividade_professor/atividade_professor_model.dart';
 
 class AdicionarAtividadeScreen extends StatefulWidget {
   final String nomeDisciplina;
+  final String disciplinaId;
+  final String pessoaId;
 
-  const AdicionarAtividadeScreen({super.key, required this.nomeDisciplina});
+  const AdicionarAtividadeScreen({
+    super.key,
+    required this.nomeDisciplina,
+    this.disciplinaId = 'calculo1',
+    String? pessoaId,
+  }) : pessoaId = pessoaId ?? '';
 
   @override
   State<AdicionarAtividadeScreen> createState() =>
@@ -20,6 +28,18 @@ class _AdicionarAtividadeScreenState extends State<AdicionarAtividadeScreen> {
   final _tituloController = TextEditingController();
   final _prazoController = TextEditingController();
   final _descricaoController = TextEditingController();
+  
+  final AtividadeService _atividadeService = AtividadeService();
+  bool _isLoading = false;
+  late String _pessoaId;
+
+  @override
+  void initState() {
+    super.initState();
+    _pessoaId = widget.pessoaId.isEmpty
+        ? (FirebaseAuth.instance.currentUser?.uid ?? '')
+        : widget.pessoaId;
+  }
 
   @override
   void dispose() {
@@ -30,22 +50,47 @@ class _AdicionarAtividadeScreenState extends State<AdicionarAtividadeScreen> {
     super.dispose();
   }
 
-  void _salvarAtividade() {
+  Future<void> _salvarAtividade() async {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    Navigator.pop(
-      context,
-      AtividadeProfessor(
+    setState(() => _isLoading = true);
+
+    try {
+      final atividade = AtividadeProfessor(
         turma: _turmaController.text.trim(),
         titulo: _tituloController.text.trim(),
         prazo: _prazoController.text.trim(),
         descricao: _descricaoController.text.trim(),
         entregues: 0,
         totalAlunos: 0,
-      ),
-    );
+      );
+
+      await _atividadeService.criarAtividade(
+        _pessoaId,
+        widget.disciplinaId,
+        atividade,
+      );
+
+      if (!mounted) return;
+
+      Navigator.pop(context, atividade);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Atividade salva no Firebase!')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Erro ao salvar: $e')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
   }
 
   @override
@@ -131,11 +176,21 @@ class _AdicionarAtividadeScreenState extends State<AdicionarAtividadeScreen> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  onPressed: _salvarAtividade,
-                  icon: const Icon(Icons.add_circle_outline),
-                  label: const Text(
-                    'Criar atividade',
-                    style: TextStyle(
+                  onPressed: _isLoading ? null : _salvarAtividade,
+                  icon: _isLoading
+                      ? const SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor:
+                                AlwaysStoppedAnimation<Color>(Colors.white),
+                          ),
+                        )
+                      : const Icon(Icons.add_circle_outline),
+                  label: Text(
+                    _isLoading ? 'Salvando...' : 'Criar atividade',
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
