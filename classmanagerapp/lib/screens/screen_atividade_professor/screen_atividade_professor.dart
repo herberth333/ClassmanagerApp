@@ -1,15 +1,18 @@
 import 'package:flutter/material.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
+import '../../services/atividade_service.dart';
 import '../screen_adicionar_atividade/screen_adicionar_atividade.dart';
 import '../screen_horarios/screen_horarios.dart';
 import 'atividade_professor_model.dart';
 
 class AtividadeProfessorScreen extends StatefulWidget {
   final String nomeDisciplina;
+  final String disciplinaId;
 
   const AtividadeProfessorScreen({
     super.key,
     this.nomeDisciplina = 'Calculo 1',
+    this.disciplinaId = 'calculo1',
   });
 
   @override
@@ -19,32 +22,30 @@ class AtividadeProfessorScreen extends StatefulWidget {
 
 class _AtividadeProfessorScreenState extends State<AtividadeProfessorScreen> {
   static const Color _blueColor = Color(0xFF0569FF);
+  final AtividadeService _atividadeService = AtividadeService();
+  late String _pessoaId;
 
-  final List<AtividadeProfessor> _atividades = [...atividadesProfessorMock];
-
-  int get _totalEntregas {
-    return _atividades.fold(
-      0,
-      (total, atividade) => total + atividade.entregues,
-    );
+  @override
+  void initState() {
+    super.initState();
+    _pessoaId = FirebaseAuth.instance.currentUser?.uid ?? '';
   }
 
   Future<void> _abrirAdicionarAtividade() async {
     final atividade = await Navigator.push<AtividadeProfessor>(
       context,
       MaterialPageRoute(
-        builder: (context) =>
-            AdicionarAtividadeScreen(nomeDisciplina: widget.nomeDisciplina),
+        builder: (context) => AdicionarAtividadeScreen(
+          nomeDisciplina: widget.nomeDisciplina,
+          disciplinaId: widget.disciplinaId,
+          pessoaId: _pessoaId,
+        ),
       ),
     );
 
     if (atividade == null) {
       return;
     }
-
-    setState(() {
-      _atividades.insert(0, atividade);
-    });
 
     if (!mounted) {
       return;
@@ -58,7 +59,11 @@ class _AtividadeProfessorScreenState extends State<AtividadeProfessorScreen> {
   void _abrirHorarios() {
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const HorariosScreen()),
+      MaterialPageRoute(
+        builder: (context) => HorariosScreen(
+          disciplinaId: widget.disciplinaId,
+        ),
+      ),
     );
   }
 
@@ -114,27 +119,64 @@ class _AtividadeProfessorScreenState extends State<AtividadeProfessorScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildResumo(),
-                  const SizedBox(height: 18),
-                  const Text(
-                    'ATIVIDADES PUBLICADAS:',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      fontFamily: 'serif',
+                  StreamBuilder<List<AtividadeProfessor>>(
+                    stream: _atividadeService.getAtividadesDisciplina(
+                      _pessoaId,
+                      widget.disciplinaId,
                     ),
-                  ),
-                  const SizedBox(height: 10),
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: _atividades.length,
-                    separatorBuilder: (context, index) =>
-                        const SizedBox(height: 10),
-                    itemBuilder: (context, index) {
-                      return _AtividadeProfessorCard(
-                        atividade: _atividades[index],
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+
+                      if (snapshot.hasError) {
+                        return Center(
+                          child: Text('Erro: ${snapshot.error}'),
+                        );
+                      }
+
+                      final atividades = snapshot.data ?? [];
+                      final totalEntregas = atividades.fold(
+                        0,
+                        (total, atividade) => total + atividade.entregues,
+                      );
+
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          _buildResumo(
+                            atividades.length,
+                            totalEntregas,
+                          ),
+                          const SizedBox(height: 18),
+                          const Text(
+                            'ATIVIDADES PUBLICADAS:',
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: 'serif',
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          if (atividades.isEmpty)
+                            const Center(
+                              child: Text('Nenhuma atividade cadastrada'),
+                            )
+                          else
+                            ListView.separated(
+                              shrinkWrap: true,
+                              physics: const NeverScrollableScrollPhysics(),
+                              itemCount: atividades.length,
+                              separatorBuilder: (context, index) =>
+                                  const SizedBox(height: 10),
+                              itemBuilder: (context, index) {
+                                return _AtividadeProfessorCard(
+                                  atividade: atividades[index],
+                                );
+                              },
+                            ),
+                        ],
                       );
                     },
                   ),
@@ -148,7 +190,7 @@ class _AtividadeProfessorScreenState extends State<AtividadeProfessorScreen> {
     );
   }
 
-  Widget _buildResumo() {
+  Widget _buildResumo(int totalAtividades, int totalEntregas) {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(16),
@@ -173,14 +215,14 @@ class _AtividadeProfessorScreenState extends State<AtividadeProfessorScreen> {
               Expanded(
                 child: _buildResumoItem(
                   label: 'Atividades',
-                  value: _atividades.length.toString(),
+                  value: totalAtividades.toString(),
                 ),
               ),
               const SizedBox(width: 10),
               Expanded(
                 child: _buildResumoItem(
                   label: 'Entregas',
-                  value: _totalEntregas.toString(),
+                  value: totalEntregas.toString(),
                 ),
               ),
             ],

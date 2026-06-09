@@ -1,19 +1,78 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class AtividadeProfessor {
+  final String? id;
   final String turma;
   final String titulo;
   final String prazo;
   final String descricao;
   final int entregues;
   final int totalAlunos;
+  final DateTime? criadoEm;
 
   const AtividadeProfessor({
+    this.id,
     required this.turma,
     required this.titulo,
     required this.prazo,
     required this.descricao,
     required this.entregues,
     required this.totalAlunos,
+    this.criadoEm,
   });
+
+  // Converter para Map para salvar no Firestore
+  Map<String, dynamic> toFirestore() {
+    return {
+      'turma': turma,
+      'titulo': titulo,
+      'prazo': prazo,
+      'descricao': descricao,
+      'entregues': entregues,
+      'totalAlunos': totalAlunos,
+      'criadoEm': criadoEm ?? DateTime.now(),
+    };
+  }
+
+  // Converter de DocumentSnapshot do Firestore
+  factory AtividadeProfessor.fromFirestore(DocumentSnapshot doc) {
+    Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+    return AtividadeProfessor(
+      id: doc.id,
+      turma: data['turma'] ?? '',
+      titulo: data['titulo'] ?? '',
+      prazo: data['prazo'] ?? '',
+      descricao: data['descricao'] ?? '',
+      entregues: data['entregues'] ?? 0,
+      totalAlunos: data['totalAlunos'] ?? 0,
+      criadoEm: data['criadoEm'] != null
+          ? (data['criadoEm'] as Timestamp).toDate()
+          : DateTime.now(),
+    );
+  }
+
+  // Copiar com alterações
+  AtividadeProfessor copyWith({
+    String? id,
+    String? turma,
+    String? titulo,
+    String? prazo,
+    String? descricao,
+    int? entregues,
+    int? totalAlunos,
+    DateTime? criadoEm,
+  }) {
+    return AtividadeProfessor(
+      id: id ?? this.id,
+      turma: turma ?? this.turma,
+      titulo: titulo ?? this.titulo,
+      prazo: prazo ?? this.prazo,
+      descricao: descricao ?? this.descricao,
+      entregues: entregues ?? this.entregues,
+      totalAlunos: totalAlunos ?? this.totalAlunos,
+      criadoEm: criadoEm ?? this.criadoEm,
+    );
+  }
 }
 
 const List<AtividadeProfessor> atividadesProfessorMock = [
