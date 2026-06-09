@@ -140,6 +140,7 @@ class AuthService {
           'email': usuario.email,
           'dataCriacao': FieldValue.serverTimestamp(),
           'tipoUsuario': 'aluno',
+          'criadoPor': 'Google Sign-In',
         });
       }
 
