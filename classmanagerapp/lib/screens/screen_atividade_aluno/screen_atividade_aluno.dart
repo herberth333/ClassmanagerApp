@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'atividade_aluno_model.dart';
 import '../screen_entrega_atividade_aluno/screen_entrega_atividade_aluno.dart';
+import '../../services/atividade_aluno_service.dart';
 
 class AtividadeAlunoScreen extends StatelessWidget {
   final String nomeDisciplina;
@@ -39,10 +40,23 @@ class AtividadeAlunoScreen extends StatelessWidget {
   }
 }
 
-class AtividadeAlunoContent extends StatelessWidget {
+class AtividadeAlunoContent extends StatefulWidget {
   final String nomeDisciplina;
 
   const AtividadeAlunoContent({super.key, required this.nomeDisciplina});
+
+  @override
+  State<AtividadeAlunoContent> createState() => _AtividadeAlunoContentState();
+}
+
+class _AtividadeAlunoContentState extends State<AtividadeAlunoContent> {
+  final AtividadeAlunoService _service = AtividadeAlunoService();
+
+  @override
+  void initState() {
+    super.initState();
+    _service.garantirAtividadeInicial(widget.nomeDisciplina);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,25 +75,44 @@ class AtividadeAlunoContent extends StatelessWidget {
             ),
           ),
         ),
-        ListView.separated(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          itemCount: atividadesAlunoMock.length,
-          separatorBuilder: (context, index) => const SizedBox(height: 10),
-          itemBuilder: (context, index) {
-            final atividade = atividadesAlunoMock[index];
+        StreamBuilder<List<AtividadeAluno>>(
+          stream: _service.assistirAtividades(widget.nomeDisciplina),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return Text('Erro ao carregar atividades: ${snapshot.error}');
+            }
 
-            return AtividadeCard(
-              atividade: atividade,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EntregaAtividadeAlunoScreen(
-                      nomeDisciplina: nomeDisciplina,
-                      atividade: atividade,
-                    ),
-                  ),
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final atividades = snapshot.data ?? [];
+
+            if (atividades.isEmpty) {
+              return const Text('Nenhuma atividade encontrada.');
+            }
+
+            return ListView.separated(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: atividades.length,
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              itemBuilder: (context, index) {
+                final atividade = atividades[index];
+
+                return AtividadeCard(
+                  atividade: atividade,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EntregaAtividadeAlunoScreen(
+                          nomeDisciplina: widget.nomeDisciplina,
+                          atividade: atividade,
+                        ),
+                      ),
+                    );
+                  },
                 );
               },
             );
